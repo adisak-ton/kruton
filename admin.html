@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ระบบจัดการหลังบ้าน (Admin) | ห้องเรียนออนไลน์ วิชาเทคโนโลยี</title>
+
+  <!-- Google Fonts: Prompt -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Prompt', 'sans-serif']
+          }
+        }
+      }
+    };
+  </script>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%232563eb'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='36' font-family='sans-serif' font-weight='bold'%3ET%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body class="min-h-screen flex flex-col bg-slate-50 text-slate-800">
+  <!-- Shared Navbar -->
+  <div id="app-navbar"></div>
+
+  <!-- Main Content -->
+  <main class="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+    <!-- ================================================================== -->
+    <!-- LOGIN SCREEN (ADMIN_PIN)                                           -->
+    <!-- ================================================================== -->
+    <section id="admin-login-section" class="max-w-md mx-auto">
+      <div class="bg-white rounded-3xl border border-slate-200 shadow-lg overflow-hidden">
+        <div class="bg-gradient-to-r from-slate-900 to-blue-950 p-7 text-center text-white">
+          <div class="w-16 h-16 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center text-3xl mx-auto mb-3">
+            🔐
+          </div>
+          <h1 class="text-2xl font-bold">เข้าสู่ระบบผู้ดูแล (ครูผู้สอน)</h1>
+          <p class="text-xs text-slate-300 mt-1">กรอกรหัส ADMIN_PIN เพื่อเพิ่มประกาศ สื่อการสอน และใบงาน</p>
+        </div>
+
+        <form id="admin-login-form" class="p-7 space-y-5">
+          <div>
+            <label for="admin-pin-input" class="block text-sm font-semibold text-slate-700 mb-2">รหัสผ่าน ADMIN_PIN</label>
+            <input id="admin-pin-input"
+                   type="password"
+                   inputmode="numeric"
+                   required
+                   autocomplete="current-password"
+                   placeholder="กรอกรหัส PIN (ค่าเริ่มต้น 1234)"
+                   class="w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3.5 text-center text-xl font-bold tracking-[0.35em] text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white" />
+          </div>
+
+          <div id="login-error-box" class="hidden rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm font-medium p-3 text-center"></div>
+
+          <button id="login-submit-btn" type="submit"
+                  class="w-full py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-base shadow-sm transition-colors">
+            เข้าสู่ระบบจัดการหลังบ้าน
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ================================================================== -->
+    <!-- ADMIN DASHBOARD (3 FORM TABS)                                      -->
+    <!-- ================================================================== -->
+    <section id="admin-dashboard-section" class="hidden space-y-6 animate-fade-in">
+      <!-- Top Bar -->
+      <div class="bg-gradient-to-r from-slate-900 to-indigo-950 rounded-3xl p-6 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-md">
+        <div>
+          <span class="inline-block text-xs font-semibold px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 mb-1.5">
+            ● ยืนยันสิทธิ์ครูผู้สอนแล้ว
+          </span>
+          <h1 class="text-2xl font-bold">ระบบเพิ่มข้อมูลห้องเรียนออนไลน์</h1>
+          <p class="text-xs sm:text-sm text-slate-300 mt-0.5">บันทึกข้อมูลใหม่ส่งตรงเข้าสู่ Google Sheets อัตโนมัติ</p>
+        </div>
+        <button id="admin-logout-btn" type="button"
+                class="self-start sm:self-center px-4 py-2 rounded-xl bg-white/15 hover:bg-red-600 text-white text-sm font-semibold transition-colors">
+          ออกจากระบบ
+        </button>
+      </div>
+
+      <!-- 3 Form Tabs -->
+      <div class="bg-white p-2 rounded-2xl border border-slate-200 shadow-xs grid grid-cols-1 sm:grid-cols-3 gap-2">
+        <button type="button" data-admin-tab="Announcements"
+                class="admin-tab-btn px-4 py-3 rounded-xl text-sm font-bold transition-all bg-blue-600 text-white shadow-sm">
+          📢 เพิ่มข่าวประกาศ
+        </button>
+        <button type="button" data-admin-tab="Teaching_Media"
+                class="admin-tab-btn px-4 py-3 rounded-xl text-sm font-bold transition-all text-slate-600 hover:bg-slate-100">
+          🎬 เพิ่มสื่อการสอน
+        </button>
+        <button type="button" data-admin-tab="Knowledge_Hub"
+                class="admin-tab-btn px-4 py-3 rounded-xl text-sm font-bold transition-all text-slate-600 hover:bg-slate-100">
+          📄 เพิ่มใบงาน / คลังความรู้
+        </button>
+      </div>
+
+      <!-- Status Alert -->
+      <div id="admin-status-alert" class="hidden rounded-2xl p-4 text-sm font-semibold"></div>
+
+      <!-- FORM 1: Announcements -->
+      <div id="form-panel-Announcements" class="admin-form-panel bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs">
+        <h2 class="text-lg font-bold text-slate-800 mb-5 flex items-center gap-2">
+          <span>📢</span> เพิ่มข่าวประกาศใหม่ (แท็บ Announcements)
+        </h2>
+        <form id="form-Announcements" class="space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1.5">วันที่ประกาศ</label>
+              <input name="Date" type="date" required
+                     class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1.5">แท็ก / รายวิชา</label>
+              <select name="Tag" required
+                      class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white">
+                <option value="วิทยาการคำนวณ">วิทยาการคำนวณ</option>
+                <option value="EEC">EEC</option>
+                <option value="ชุมนุม">ชุมนุม</option>
+                <option value="ทั่วไป">ทั่วไป</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1.5">หัวข้อประกาศ *</label>
+            <input name="Title" type="text" required placeholder="เช่น แจ้งกำหนดสอบเก็บคะแนนหน่วยที่ 2"
+                   class="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1.5">รายละเอียดเนื้อหา *</label>
+            <textarea name="Content" rows="4" required placeholder="พิมพ์รายละเอียดประกาศ..."
+                      class="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white"></textarea>
+          </div>
+
+          <label class="inline-flex items-center gap-2 text-sm font-medium text-slate-700 cursor-pointer">
+            <input name="Pinned" type="checkbox" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4" />
+            📌 ปักหมุดข่าวประกาศนี้ไว้บนสุดของหน้าแรก
+          </label>
+
+          <div class="pt-2">
+            <button type="submit" class="admin-save-btn w-full sm:w-auto px-7 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-sm transition-colors">
+              💾 บันทึกข่าวประกาศลง Google Sheets
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- FORM 2: Teaching_Media -->
+      <div id="form-panel-Teaching_Media" class="admin-form-panel hidden bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs">
+        <h2 class="text-lg font-bold text-slate-800 mb-5 flex items-center gap-2">
+          <span>🎬</span> เพิ่มสื่อการสอนใหม่ (แท็บ Teaching_Media)
+        </h2>
+        <form id="form-Teaching_Media" class="space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1.5">รายวิชา *</label>
+              <select name="Subject" required
+                      class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white">
+                <option value="วิทยาการคำนวณ">วิทยาการคำนวณ</option>
+                <option value="EEC">EEC</option>
+                <option value="ชุมนุม">ชุมนุม</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1.5">ระดับชั้น *</label>
+              <input name="Grade" type="text" required placeholder="เช่น ม.1, ม.2, ทุกระดับชั้น"
+                     class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1.5">ประเภทสื่อ</label>
+              <select name="Type" required
+                      class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white">
+                <option value="Slide">Slide (สไลด์นำเสนอ)</option>
+                <option value="Video">Video (วิดีโอการสอน)</option>
+                <option value="PDF">PDF (เอกสารประกอบ)</option>
+                <option value="Interactive">Interactive / เกม</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1.5">หน่วยการเรียนรู้ *</label>
+            <input name="Unit" type="text" required placeholder="เช่น หน่วยที่ 1 แนวคิดเชิงคำนวณ"
+                   class="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1.5">ชื่อสื่อการสอน *</label>
+            <input name="Title" type="text" required placeholder="เช่น สไลด์สอนเรื่องอัลกอริทึมและผังงาน"
+                   class="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1.5">ลิงก์ Google Drive / URL สื่อ *</label>
+            <input name="Link" type="url" required placeholder="https://drive.google.com/file/d/.../view?usp=sharing"
+                   class="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white" />
+            <p class="text-[11px] text-slate-400 mt-1">ระบบจะแปลงลิงก์แชร์ Google Drive เป็นลิงก์ Preview เต็มจอให้อัตโนมัติ</p>
+          </div>
+
+          <div class="pt-2">
+            <button type="submit" class="admin-save-btn w-full sm:w-auto px-7 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-sm transition-colors">
+              💾 บันทึกสื่อการสอนลง Google Sheets
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- FORM 3: Knowledge_Hub -->
+      <div id="form-panel-Knowledge_Hub" class="admin-form-panel hidden bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs">
+        <h2 class="text-lg font-bold text-slate-800 mb-5 flex items-center gap-2">
+          <span>📄</span> เพิ่มใบงาน / เอกสารคลังความรู้ (แท็บ Knowledge_Hub)
+        </h2>
+        <form id="form-Knowledge_Hub" class="space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1.5">รายวิชา *</label>
+              <select name="Subject" required
+                      class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white">
+                <option value="วิทยาการคำนวณ">วิทยาการคำนวณ</option>
+                <option value="EEC">EEC</option>
+                <option value="ชุมนุม">ชุมนุม</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1.5">ระดับชั้น *</label>
+              <input name="Grade" type="text" required placeholder="เช่น ม.1, ม.2, ทุกระดับชั้น"
+                     class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1.5">ชื่อใบงาน / เอกสารความรู้ *</label>
+            <input name="Title" type="text" required placeholder="เช่น ใบงานที่ 2.1 การออกแบบโปรแกรมอย่างง่าย (PDF)"
+                   class="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1.5">ลิงก์ Google Drive / URL เอกสาร *</label>
+            <input name="Link" type="url" required placeholder="https://drive.google.com/file/d/.../view?usp=sharing"
+                   class="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white" />
+            <p class="text-[11px] text-slate-400 mt-1">ระบบจะสร้างทั้งปุ่มดูตัวอย่าง (Preview) และปุ่มดาวน์โหลดพร้อมนับยอดให้อัตโนมัติ</p>
+          </div>
+
+          <div class="pt-2">
+            <button type="submit" class="admin-save-btn w-full sm:w-auto px-7 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-sm transition-colors">
+              💾 บันทึกใบงาน/เอกสารลง Google Sheets
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- Shared Footer -->
+  <div id="app-footer"></div>
+
+  <!-- Scripts -->
+  <script src="./js/config.js"></script>
+  <script src="./js/api.js"></script>
+  <script src="./js/layout.js"></script>
+  <script>
+    (() => {
+      const SESSION_KEY = "tech_classroom_admin_pin";
+      const loginSection = document.getElementById("admin-login-section");
+      const dashboardSection = document.getElementById("admin-dashboard-section");
+      const loginForm = document.getElementById("admin-login-form");
+      const pinInput = document.getElementById("admin-pin-input");
+      const loginErrorBox = document.getElementById("login-error-box");
+      const loginSubmitBtn = document.getElementById("login-submit-btn");
+      const statusAlert = document.getElementById("admin-status-alert");
+
+      function getSavedPin() {
+        return sessionStorage.getItem(SESSION_KEY) || "";
+      }
+
+      function showDashboard(pin) {
+        sessionStorage.setItem(SESSION_KEY, pin);
+        loginSection.classList.add("hidden");
+        dashboardSection.classList.remove("hidden");
+
+        // ตั้งค่าวันที่วันนี้เป็นค่าเริ่มต้นในฟอร์มประกาศ
+        const dateInput = document.querySelector('#form-Announcements input[name="Date"]');
+        if (dateInput && !dateInput.value) {
+          dateInput.value = new Date().toISOString().split("T")[0];
+        }
+      }
+
+      function logout() {
+        sessionStorage.removeItem(SESSION_KEY);
+        pinInput.value = "";
+        loginErrorBox.classList.add("hidden");
+        dashboardSection.classList.add("hidden");
+        loginSection.classList.remove("hidden");
+      }
+
+      // Login Handler
+      loginForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const pin = pinInput.value.trim();
+        if (!pin) return;
+
+        loginErrorBox.classList.add("hidden");
+        loginSubmitBtn.disabled = true;
+        loginSubmitBtn.textContent = "กำลังตรวจสอบรหัสผ่าน...";
+
+        try {
+          await API.verifyAdminPin(pin);
+          showDashboard(pin);
+          Layout.showToast("เข้าสู่ระบบผู้ดูแลเรียบร้อยแล้ว", "success");
+        } catch (err) {
+          // กรณี Apps Script ที่ Deploy ไว้ก่อนหน้ายังไม่มี action=verifyPin
+          // ให้เข้าหน้า Dashboard ได้ก่อน แต่ระบบจะตรวจ ADMIN_PIN จริงทุกครั้งที่กดบันทึกข้อมูล (addRecord)
+          if (String(err.message || "").includes("ไม่รู้จักคำสั่ง POST action: verifyPin")) {
+            showDashboard(pin);
+            Layout.showToast("เข้าสู่ระบบแล้ว (ระบบจะยืนยันรหัส PIN กับ Google Sheets ทุกครั้งที่บันทึก)", "info");
+          } else {
+            loginErrorBox.textContent = `❌ ${err.message}`;
+            loginErrorBox.classList.remove("hidden");
+          }
+        } finally {
+          loginSubmitBtn.disabled = false;
+          loginSubmitBtn.textContent = "เข้าสู่ระบบจัดการหลังบ้าน";
+        }
+      });
+
+      document.getElementById("admin-logout-btn").addEventListener("click", logout);
+
+      // Tab Switching
+      const adminTabBtns = document.querySelectorAll(".admin-tab-btn");
+      const formPanels = document.querySelectorAll(".admin-form-panel");
+
+      adminTabBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const target = btn.dataset.adminTab;
+          statusAlert.classList.add("hidden");
+
+          adminTabBtns.forEach((b) => {
+            const active = b.dataset.adminTab === target;
+            b.className = "admin-tab-btn px-4 py-3 rounded-xl text-sm font-bold transition-all " +
+              (active ? "bg-blue-600 text-white shadow-sm" : "text-slate-600 hover:bg-slate-100");
+          });
+          formPanels.forEach((p) => {
+            p.classList.toggle("hidden", p.id !== `form-panel-${target}`);
+          });
+        });
+      });
+
+      // Generic Form Submit Handler for all 3 targets
+      function bindAddRecordForm(targetSheet) {
+        const form = document.getElementById(`form-${targetSheet}`);
+        if (!form) return;
+
+        form.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const pin = getSavedPin();
+          if (!pin) {
+            logout();
+            return;
+          }
+
+          const formData = new FormData(form);
+          const data = {};
+          formData.forEach((val, key) => {
+            data[key] = typeof val === "string" ? val.trim() : val;
+          });
+
+          if (targetSheet === "Announcements") {
+            data.Pinned = form.querySelector('input[name="Pinned"]').checked;
+          }
+
+          const submitBtn = form.querySelector(".admin-save-btn");
+          const originalLabel = submitBtn.textContent;
+          submitBtn.disabled = true;
+          submitBtn.textContent = "⏳ กำลังบันทึกลง Google Sheets...";
+          statusAlert.classList.add("hidden");
+
+          try {
+            const res = await API.addRecord({ pin, target: targetSheet, data });
+            const createdId = res && res.data && res.data.ID ? ` (รหัส ${res.data.ID})` : "";
+
+            statusAlert.className = "rounded-2xl p-4 text-sm font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 animate-fade-in";
+            statusAlert.textContent = `✅ บันทึกข้อมูลใหม่เข้าแท็บ ${targetSheet}${createdId} เรียบร้อยแล้ว!`;
+            statusAlert.classList.remove("hidden");
+
+            form.reset();
+            if (targetSheet === "Announcements") {
+              const dateInput = form.querySelector('input[name="Date"]');
+              if (dateInput) dateInput.value = new Date().toISOString().split("T")[0];
+            }
+            Layout.showToast(`บันทึกข้อมูลลง ${targetSheet} สำเร็จ!`, "success");
+          } catch (err) {
+            statusAlert.className = "rounded-2xl p-4 text-sm font-semibold bg-red-50 text-red-700 border border-red-200";
+            statusAlert.textContent = `❌ บันทึกไม่สำเร็จ: ${err.message}`;
+            statusAlert.classList.remove("hidden");
+
+            if (String(err.message || "").includes("ADMIN_PIN")) {
+              Layout.showToast("รหัส PIN ไม่ถูกต้อง กรุณาเข้าสู่ระบบใหม่", "error");
+              logout();
+            }
+          } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalLabel;
+          }
+        });
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        bindAddRecordForm("Announcements");
+        bindAddRecordForm("Teaching_Media");
+        bindAddRecordForm("Knowledge_Hub");
+
+        const existingPin = getSavedPin();
+        if (existingPin) {
+          showDashboard(existingPin);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

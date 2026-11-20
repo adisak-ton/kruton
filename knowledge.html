@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>คลังความรู้และใบงาน | ห้องเรียนออนไลน์ วิชาเทคโนโลยี</title>
+
+  <!-- Google Fonts: Prompt -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Prompt', 'sans-serif']
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- QRCodeJS CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%232563eb'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='36' font-family='sans-serif' font-weight='bold'%3ET%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body class="min-h-screen flex flex-col bg-slate-50 text-slate-800">
+  <!-- Shared Navbar -->
+  <div id="app-navbar"></div>
+
+  <!-- Main Content -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+    <!-- Page Header -->
+    <div class="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-700 rounded-3xl p-6 sm:p-8 text-white shadow-lg mb-8">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <span class="inline-block text-xs font-semibold uppercase tracking-wider px-3 py-1 rounded-full bg-white/15 text-emerald-100 mb-2">
+            Knowledge Hub &amp; Worksheets
+          </span>
+          <h1 class="text-2xl sm:text-3xl font-bold">คลังความรู้และใบงาน</h1>
+          <p class="text-sm sm:text-base text-emerald-100 mt-1">
+            ค้นหาเอกสารสรุปความรู้ ใบงาน และแบบฝึกหัด ดูตัวอย่างได้ทันทีหรือดาวน์โหลดเก็บไว้อ่าน
+          </p>
+        </div>
+        <div class="bg-white/15 backdrop-blur-sm border border-white/20 rounded-2xl px-5 py-3 text-center shrink-0">
+          <div class="text-xs text-emerald-100">เอกสารที่พบ</div>
+          <div id="knowledge-count" class="text-2xl font-bold">-</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search & Filter Bar -->
+    <section class="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/80 shadow-xs mb-8 space-y-4">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <!-- Real-time Search Input -->
+        <div class="relative flex-1 max-w-xl">
+          <input id="knowledge-search"
+                 type="text"
+                 placeholder="ค้นหาชื่อใบงาน เอกสาร ระดับชั้น หรือรหัสเอกสารแบบเรียลไทม์..."
+                 class="w-full rounded-2xl border border-slate-300 bg-slate-50 pl-11 pr-4 py-3 text-sm sm:text-base text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" />
+          <svg class="w-5 h-5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+
+        <!-- Subject Filters -->
+        <div class="flex flex-wrap gap-2">
+          <button data-subject="ALL" class="kh-subject-btn px-4 py-2.5 rounded-xl text-sm font-semibold transition-all bg-slate-800 text-white shadow-xs">
+            ทุกรายวิชา
+          </button>
+          <button data-subject="วิทยาการคำนวณ" class="kh-subject-btn px-4 py-2.5 rounded-xl text-sm font-semibold transition-all bg-white text-blue-700 border border-blue-200 hover:bg-blue-50">
+            วิทยาการคำนวณ
+          </button>
+          <button data-subject="EEC" class="kh-subject-btn px-4 py-2.5 rounded-xl text-sm font-semibold transition-all bg-white text-green-700 border border-green-200 hover:bg-green-50">
+            วิชา EEC
+          </button>
+          <button data-subject="ชุมนุม" class="kh-subject-btn px-4 py-2.5 rounded-xl text-sm font-semibold transition-all bg-white text-purple-700 border border-purple-200 hover:bg-purple-50">
+            ชุมนุม
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Knowledge Cards Grid -->
+    <section id="knowledge-list-container"></section>
+  </main>
+
+  <!-- Shared Footer -->
+  <div id="app-footer"></div>
+
+  <!-- Scripts -->
+  <script src="./js/config.js"></script>
+  <script src="./js/api.js"></script>
+  <script src="./js/layout.js"></script>
+  <script src="./js/classroom-kit.js"></script>
+  <script>
+    (() => {
+      let allItems = [];
+      let selectedSubject = "ALL";
+      let searchQuery = "";
+
+      function handleDownload(item, countBadgeEl) {
+        const downloadUrl = API.toGoogleDriveDownloadUrl(item.Link);
+        if (!downloadUrl) {
+          Layout.showToast("ไม่พบลิงก์ดาวน์โหลดของเอกสารนี้", "error");
+          return;
+        }
+
+        // เปิดดาวน์โหลดในแท็บใหม่
+        window.open(downloadUrl, "_blank", "noopener,noreferrer");
+
+        // อัปเดตตัวเลขบนหน้าจอทันที (Optimistic UI)
+        const nextCount = (Number(item.Downloads) || 0) + 1;
+        item.Downloads = nextCount;
+        if (countBadgeEl) {
+          countBadgeEl.textContent = nextCount.toLocaleString("th-TH");
+        }
+
+        // ส่ง POST ไปนับยอดดาวน์โหลดใน Google Sheets (Stats + Knowledge_Hub)
+        API.trackDownload(item.ID)
+          .then((res) => {
+            if (res && res.data && res.data.itemDownloads !== undefined) {
+              item.Downloads = Number(res.data.itemDownloads);
+              if (countBadgeEl) {
+                countBadgeEl.textContent = item.Downloads.toLocaleString("th-TH");
+              }
+            }
+            Layout.showToast("เริ่มดาวน์โหลดและบันทึกสถิติเรียบร้อยแล้ว", "success");
+          })
+          .catch(() => {
+            Layout.showToast("เริ่มดาวน์โหลดเอกสารแล้ว", "info");
+          });
+      }
+
+      function renderCards() {
+        const container = document.getElementById("knowledge-list-container");
+        const countEl = document.getElementById("knowledge-count");
+        const q = searchQuery.trim().toLowerCase();
+
+        const filtered = allItems.filter((item) => {
+          const matchSubject = selectedSubject === "ALL" || String(item.Subject || "").trim() === selectedSubject;
+          const matchQuery = !q || [item.Title, item.Subject, item.Grade, item.ID]
+            .some((v) => String(v || "").toLowerCase().includes(q));
+          return matchSubject && matchQuery;
+        });
+
+        countEl.textContent = filtered.length.toLocaleString("th-TH");
+
+        if (filtered.length === 0) {
+          container.innerHTML = Layout.renderEmpty("ไม่พบเอกสารหรือใบงานที่ตรงกับคำค้นหา");
+          return;
+        }
+
+        const html = filtered.map((item, idx) => {
+          const style = APP_CONFIG.getSubjectStyle(item.Subject);
+          const downloads = Number(item.Downloads || 0).toLocaleString("th-TH");
+
+          return `
+            <article class="bg-white rounded-3xl border border-slate-200/80 shadow-xs hover:shadow-lg transition-all flex flex-col overflow-hidden animate-fade-in">
+              <div class="h-1.5 w-full ${style.bgClass}"></div>
+
+              <div class="p-5 sm:p-6 flex-1 flex flex-col">
+                <div class="flex items-center justify-between gap-2 mb-3">
+                  <div class="flex flex-wrap items-center gap-1.5">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${style.badgeClass}">
+                      ${Layout.escapeHtml(item.Subject || "ทั่วไป")}
+                    </span>
+                    ${item.Grade ? `<span class="text-xs font-medium px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600">${Layout.escapeHtml(item.Grade)}</span>` : ""}
+                  </div>
+                  <span class="text-xs font-mono text-slate-400">${Layout.escapeHtml(item.ID || "")}</span>
+                </div>
+
+                <h3 class="text-base sm:text-lg font-bold text-slate-800 leading-snug mb-4 flex-1">
+                  ${Layout.escapeHtml(item.Title)}
+                </h3>
+
+                <!-- Download Counter Row -->
+                <div class="flex items-center justify-between text-xs text-slate-500 mb-4 bg-slate-50 rounded-xl px-3.5 py-2 border border-slate-100">
+                  <span class="inline-flex items-center gap-1.5">
+                    <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    ยอดดาวน์โหลดสะสม
+                  </span>
+                  <span class="font-bold text-slate-700"><span data-dl-count="${idx}">${downloads}</span> ครั้ง</span>
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex flex-wrap items-center gap-2">
+                  <button type="button"
+                          data-action="preview"
+                          data-index="${idx}"
+                          class="flex-1 inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-sm font-semibold transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    ดูตัวอย่าง
+                  </button>
+
+                  <button type="button"
+                          data-action="download"
+                          data-index="${idx}"
+                          class="flex-1 inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold shadow-xs transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    ดาวน์โหลด
+                  </button>
+
+                  <button type="button"
+                          data-action="qr"
+                          data-index="${idx}"
+                          title="สแกน QR Code เพื่อเปิดเอกสาร"
+                          class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors shrink-0">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </article>
+          `;
+        }).join("");
+
+        container.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">${html}</div>`;
+
+        container.querySelectorAll("button[data-action]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const idx = Number(btn.dataset.index);
+            const item = filtered[idx];
+            if (!item) return;
+
+            const countBadgeEl = container.querySelector(`[data-dl-count="${idx}"]`);
+
+            if (btn.dataset.action === "preview") {
+              ClassroomKit.openPreviewModal({
+                title: item.Title,
+                subtitle: `${item.Grade ? item.Grade + " • " : ""}รหัส ${item.ID || "-"}`,
+                badge: item.Subject,
+                url: item.Link,
+                downloadUrl: API.toGoogleDriveDownloadUrl(item.Link),
+                onDownload: () => {
+                  const next = (Number(item.Downloads) || 0) + 1;
+                  item.Downloads = next;
+                  if (countBadgeEl) countBadgeEl.textContent = next.toLocaleString("th-TH");
+                  API.trackDownload(item.ID).catch(() => {});
+                }
+              });
+            } else if (btn.dataset.action === "download") {
+              handleDownload(item, countBadgeEl);
+            } else if (btn.dataset.action === "qr") {
+              ClassroomKit.openQrModal({
+                title: item.Title,
+                subtitle: `${item.Subject || ""}${item.Grade ? " • " + item.Grade : ""}`,
+                url: item.Link
+              });
+            }
+          });
+        });
+      }
+
+      function bindFilters() {
+        document.getElementById("knowledge-search").addEventListener("input", (e) => {
+          searchQuery = e.target.value;
+          renderCards();
+        });
+
+        const buttons = document.querySelectorAll(".kh-subject-btn");
+        buttons.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            selectedSubject = btn.dataset.subject;
+            buttons.forEach((b) => {
+              const s = b.dataset.subject;
+              const active = s === selectedSubject;
+              b.className = "kh-subject-btn px-4 py-2.5 rounded-xl text-sm font-semibold transition-all ";
+              if (active) {
+                if (s === "วิทยาการคำนวณ") b.className += "bg-blue-600 text-white shadow-sm";
+                else if (s === "EEC") b.className += "bg-green-600 text-white shadow-sm";
+                else if (s === "ชุมนุม") b.className += "bg-purple-600 text-white shadow-sm";
+                else b.className += "bg-slate-800 text-white shadow-sm";
+              } else {
+                if (s === "วิทยาการคำนวณ") b.className += "bg-white text-blue-700 border border-blue-200 hover:bg-blue-50";
+                else if (s === "EEC") b.className += "bg-white text-green-700 border border-green-200 hover:bg-green-50";
+                else if (s === "ชุมนุม") b.className += "bg-white text-purple-700 border border-purple-200 hover:bg-purple-50";
+                else b.className += "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50";
+              }
+            });
+            renderCards();
+          });
+        });
+      }
+
+      async function init() {
+        bindFilters();
+        const container = document.getElementById("knowledge-list-container");
+        container.innerHTML = Layout.renderLoading("กำลังโหลดคลังความรู้และใบงาน...");
+
+        try {
+          const res = await API.getSheetData("Knowledge_Hub");
+          allItems = Array.isArray(res.data) ? res.data : [];
+          renderCards();
+        } catch (err) {
+          container.innerHTML = Layout.renderError(err.message);
+          document.getElementById("knowledge-count").textContent = "0";
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", init);
+    })();
+  </script>
+</body>
+</html>

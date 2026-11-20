@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>สำหรับคณะกรรมการประเมิน | ห้องเรียนออนไลน์ วิชาเทคโนโลยี</title>
+
+  <!-- Google Fonts: Prompt -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Prompt', 'sans-serif']
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- QRCodeJS CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%232563eb'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='36' font-family='sans-serif' font-weight='bold'%3ET%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body class="min-h-screen flex flex-col bg-slate-50 text-slate-800">
+  <!-- Shared Navbar -->
+  <div id="app-navbar"></div>
+
+  <!-- Main Content -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-10">
+    <!-- Committee Banner + Teacher Profile -->
+    <section class="bg-gradient-to-br from-slate-900 via-slate-800 to-amber-950 rounded-3xl p-6 sm:p-8 lg:p-10 text-white shadow-xl relative overflow-hidden">
+      <div class="absolute right-0 top-0 w-72 h-72 bg-amber-500/15 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="relative grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div class="lg:col-span-4 flex flex-col items-center lg:items-start text-center lg:text-left">
+          <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-5xl shadow-lg border-4 border-white/20 mb-4">
+            👨‍🏫
+          </div>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 text-amber-200 border border-amber-400/30 text-xs font-semibold mb-2">
+            E-Portfolio สำหรับคณะกรรมการประเมิน
+          </span>
+          <h1 id="prof-name" class="text-2xl sm:text-3xl font-bold">ครูผู้สอนวิชาเทคโนโลยี</h1>
+          <p id="prof-position" class="text-sm text-amber-200 mt-1">ครู วิทยฐานะครูชำนาญการ</p>
+        </div>
+
+        <div class="lg:col-span-8 bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-5 sm:p-6 space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+            <div>
+              <div class="text-xs text-slate-300">สังกัด / กลุ่มสาระฯ</div>
+              <div id="prof-dept" class="font-semibold text-white mt-0.5">-</div>
+            </div>
+            <div>
+              <div class="text-xs text-slate-300">วุฒิการศึกษา</div>
+              <div id="prof-edu" class="font-semibold text-white mt-0.5">-</div>
+            </div>
+          </div>
+
+          <div>
+            <div class="text-xs text-slate-300 mb-2">ความเชี่ยวชาญและรายวิชาที่รับผิดชอบ</div>
+            <div id="prof-expertise" class="flex flex-wrap gap-2"></div>
+          </div>
+
+          <div class="pt-3 border-t border-white/15">
+            <div class="text-xs text-amber-200 font-medium mb-1">ปรัชญาการจัดการเรียนรู้</div>
+            <p id="prof-philosophy" class="text-sm text-slate-200 leading-relaxed italic"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Teaching Schedule Section -->
+    <section class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-5">
+        <div>
+          <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+            <span class="w-2 h-6 rounded-full bg-amber-500 inline-block"></span>
+            ตารางสอนประจำภาคเรียน
+          </h2>
+          <p class="text-sm text-slate-500 mt-0.5">ภาระงานสอนรายวิชาวิทยาการคำนวณ, วิชา EEC และกิจกรรมชุมนุม</p>
+        </div>
+        <span id="schedule-year" class="text-xs font-semibold px-3 py-1.5 rounded-xl bg-amber-50 text-amber-800 border border-amber-200 self-start">
+          ปีการศึกษา 2569
+        </span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-50 border-y border-slate-200 text-xs font-semibold text-slate-500 uppercase">
+              <th class="py-3.5 px-4">วัน</th>
+              <th class="py-3.5 px-4">คาบเรียน</th>
+              <th class="py-3.5 px-4">รายวิชา</th>
+              <th class="py-3.5 px-4">ระดับชั้น</th>
+              <th class="py-3.5 px-4">ห้องเรียน / สถานที่</th>
+            </tr>
+          </thead>
+          <tbody id="schedule-tbody" class="divide-y divide-slate-100 text-sm"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Evaluation Documents Section (E_Portfolio from Google Sheets) -->
+    <section class="space-y-6">
+      <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
+        <div>
+          <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-2">
+            <span class="w-2 h-7 rounded-full bg-blue-600 inline-block"></span>
+            เอกสารและหลักฐานประกอบการประเมิน
+          </h2>
+          <p class="text-sm text-slate-500 mt-1">
+            จัดหมวดหมู่ชัดเจน (แผนการสอน, ว.PA, PLC, วิจัยในชั้นเรียน, เกียรติบัตร และผลงาน) เปิดดู PDF ได้ทันทีในหน้าเว็บ
+          </p>
+        </div>
+
+        <!-- Year & Category Filters -->
+        <div class="flex flex-wrap items-center gap-3">
+          <div>
+            <label for="year-filter" class="sr-only">กรองตามปีการศึกษา</label>
+            <select id="year-filter"
+                    class="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500">
+              <option value="ALL">ทุกปีการศึกษา</option>
+            </select>
+          </div>
+          <div>
+            <label for="category-filter" class="sr-only">กรองตามหมวดหมู่</label>
+            <select id="category-filter"
+                    class="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500">
+              <option value="ALL">ทุกหมวดหมู่เอกสาร</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Documents Grouped Container -->
+      <div id="portfolio-container"></div>
+    </section>
+  </main>
+
+  <!-- Shared Footer -->
+  <div id="app-footer"></div>
+
+  <!-- Scripts -->
+  <script src="./js/config.js"></script>
+  <script src="./js/api.js"></script>
+  <script src="./js/layout.js"></script>
+  <script src="./js/classroom-kit.js"></script>
+  <script>
+    (() => {
+      let allDocs = [];
+      let selectedYear = "ALL";
+      let selectedCategory = "ALL";
+
+      function getCategoryMeta(category) {
+        const c = String(category || "").toLowerCase();
+        if (c.includes("แผน") || c.includes("หลักสูตร")) {
+          return { icon: "📘", color: "bg-blue-50 text-blue-700 border-blue-200" };
+        }
+        if (c.includes("pa") || c.includes("ว.pa")) {
+          return { icon: "📋", color: "bg-amber-50 text-amber-800 border-amber-200" };
+        }
+        if (c.includes("plc")) {
+          return { icon: "🤝", color: "bg-emerald-50 text-emerald-700 border-emerald-200" };
+        }
+        if (c.includes("วิจัย")) {
+          return { icon: "🔬", color: "bg-indigo-50 text-indigo-700 border-indigo-200" };
+        }
+        if (c.includes("เกียรติบัตร") || c.includes("รางวัล") || c.includes("ผลงาน")) {
+          return { icon: "🏆", color: "bg-purple-50 text-purple-700 border-purple-200" };
+        }
+        return { icon: "📁", color: "bg-slate-100 text-slate-700 border-slate-200" };
+      }
+
+      function renderProfileAndSchedule() {
+        const cfg = window.APP_CONFIG || {};
+        const prof = cfg.TEACHER_PROFILE || {};
+
+        document.getElementById("prof-name").textContent = prof.fullName || cfg.TEACHER_NAME || "ครูผู้สอนวิชาเทคโนโลยี";
+        document.getElementById("prof-position").textContent = prof.position || cfg.TEACHER_TITLE || "";
+        document.getElementById("prof-dept").textContent = prof.department || cfg.SCHOOL_NAME || "";
+        document.getElementById("prof-edu").textContent = prof.education || "-";
+        document.getElementById("prof-philosophy").textContent = prof.philosophy ? `“${prof.philosophy}”` : "";
+        document.getElementById("schedule-year").textContent = `ปีการศึกษา ${cfg.ACADEMIC_YEAR || "2569"}`;
+
+        const expList = Array.isArray(prof.expertise) ? prof.expertise : [];
+        document.getElementById("prof-expertise").innerHTML = expList.map((e) => `
+          <span class="px-3 py-1 rounded-xl bg-white/15 border border-white/20 text-xs font-medium text-white">
+            ✓ ${Layout.escapeHtml(e)}
+          </span>
+        `).join("");
+
+        const schedule = Array.isArray(cfg.TEACHING_SCHEDULE) ? cfg.TEACHING_SCHEDULE : [];
+        document.getElementById("schedule-tbody").innerHTML = schedule.map((row) => {
+          const style = APP_CONFIG.getSubjectStyle(row.subject);
+          return `
+            <tr class="hover:bg-slate-50/80 transition-colors">
+              <td class="py-3.5 px-4 font-semibold text-slate-800 whitespace-nowrap">${Layout.escapeHtml(row.day)}</td>
+              <td class="py-3.5 px-4 text-slate-600 whitespace-nowrap">${Layout.escapeHtml(row.periods)}</td>
+              <td class="py-3.5 px-4 whitespace-nowrap">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${style.badgeClass}">
+                  ${Layout.escapeHtml(row.subject)}
+                </span>
+              </td>
+              <td class="py-3.5 px-4 text-slate-700 font-medium whitespace-nowrap">${Layout.escapeHtml(row.grade)}</td>
+              <td class="py-3.5 px-4 text-slate-600">${Layout.escapeHtml(row.room)}</td>
+            </tr>
+          `;
+        }).join("");
+      }
+
+      function populateFilters() {
+        const yearSelect = document.getElementById("year-filter");
+        const catSelect = document.getElementById("category-filter");
+
+        const years = [...new Set(allDocs.map((d) => String(d.AcademicYear || "").trim()).filter(Boolean))]
+          .sort((a, b) => b.localeCompare(a));
+        const categories = [...new Set(allDocs.map((d) => String(d.Category || "").trim()).filter(Boolean))];
+
+        yearSelect.innerHTML = `<option value="ALL">ทุกปีการศึกษา</option>` +
+          years.map((y) => `<option value="${Layout.escapeHtml(y)}">ปีการศึกษา ${Layout.escapeHtml(y)}</option>`).join("");
+
+        catSelect.innerHTML = `<option value="ALL">ทุกหมวดหมู่เอกสาร</option>` +
+          categories.map((c) => `<option value="${Layout.escapeHtml(c)}">${Layout.escapeHtml(c)}</option>`).join("");
+      }
+
+      function renderPortfolioDocs() {
+        const container = document.getElementById("portfolio-container");
+
+        const filtered = allDocs.filter((doc) => {
+          const matchYear = selectedYear === "ALL" || String(doc.AcademicYear || "").trim() === selectedYear;
+          const matchCat = selectedCategory === "ALL" || String(doc.Category || "").trim() === selectedCategory;
+          return matchYear && matchCat;
+        });
+
+        if (filtered.length === 0) {
+          container.innerHTML = Layout.renderEmpty("ไม่พบเอกสารประเมินในเงื่อนไขที่เลือก");
+          return;
+        }
+
+        // จัดกลุ่มตามหมวดหมู่เอกสาร (Category)
+        const grouped = {};
+        filtered.forEach((doc) => {
+          const cat = String(doc.Category || "เอกสารอื่นๆ").trim();
+          if (!grouped[cat]) grouped[cat] = [];
+          grouped[cat].push(doc);
+        });
+
+        const flatListForClick = [];
+        const sectionsHtml = Object.entries(grouped).map(([category, docs]) => {
+          // เรียงตามปีการศึกษาล่าสุดภายในแต่ละหมวดหมู่
+          docs.sort((a, b) => String(b.AcademicYear || "").localeCompare(String(a.AcademicYear || "")));
+          const meta = getCategoryMeta(category);
+
+          const itemsHtml = docs.map((doc) => {
+            const globalIdx = flatListForClick.length;
+            flatListForClick.push(doc);
+
+            return `
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl bg-slate-50 hover:bg-blue-50/40 border border-slate-200/80 transition-colors">
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-2 mb-1.5">
+                    <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-white border border-slate-200 text-slate-600">
+                      ปีการศึกษา ${Layout.escapeHtml(doc.AcademicYear || "-")}
+                    </span>
+                  </div>
+                  <h4 class="text-base font-bold text-slate-800 leading-snug">
+                    ${Layout.escapeHtml(doc.Title)}
+                  </h4>
+                </div>
+
+                <div class="flex items-center gap-2 shrink-0">
+                  <button type="button"
+                          data-doc-preview="${globalIdx}"
+                          class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold shadow-xs transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    เปิดดู PDF ทันที
+                  </button>
+
+                  <a href="${Layout.escapeHtml(API.toGoogleDriveDownloadUrl(doc.Link))}"
+                     target="_blank"
+                     rel="noopener noreferrer"
+                     title="ดาวน์โหลดเอกสาร"
+                     class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            `;
+          }).join("");
+
+          return `
+            <div class="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/80 shadow-xs animate-fade-in">
+              <div class="flex items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-100">
+                <div class="flex items-center gap-2.5">
+                  <span class="w-10 h-10 rounded-xl border ${meta.color} flex items-center justify-center text-lg">
+                    ${meta.icon}
+                  </span>
+                  <h3 class="text-lg font-bold text-slate-800">${Layout.escapeHtml(category)}</h3>
+                </div>
+                <span class="text-xs font-semibold px-3 py-1 rounded-full bg-slate-100 text-slate-600">
+                  ${docs.length} รายการ
+                </span>
+              </div>
+
+              <div class="space-y-3">
+                ${itemsHtml}
+              </div>
+            </div>
+          `;
+        }).join("");
+
+        container.innerHTML = `<div class="space-y-6">${sectionsHtml}</div>`;
+
+        container.querySelectorAll("button[data-doc-preview]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const doc = flatListForClick[Number(btn.dataset.docPreview)];
+            if (!doc) return;
+            ClassroomKit.openPreviewModal({
+              title: doc.Title,
+              subtitle: `ปีการศึกษา ${doc.AcademicYear || "-"}`,
+              badge: doc.Category,
+              url: doc.Link,
+              downloadUrl: API.toGoogleDriveDownloadUrl(doc.Link)
+            });
+          });
+        });
+      }
+
+      async function init() {
+        renderProfileAndSchedule();
+
+        document.getElementById("year-filter").addEventListener("change", (e) => {
+          selectedYear = e.target.value;
+          renderPortfolioDocs();
+        });
+
+        document.getElementById("category-filter").addEventListener("change", (e) => {
+          selectedCategory = e.target.value;
+          renderPortfolioDocs();
+        });
+
+        const container = document.getElementById("portfolio-container");
+        container.innerHTML = Layout.renderLoading("กำลังโหลดเอกสารประกอบการประเมิน...");
+
+        try {
+          const res = await API.getSheetData("E_Portfolio");
+          allDocs = Array.isArray(res.data) ? res.data : [];
+          populateFilters();
+          renderPortfolioDocs();
+        } catch (err) {
+          container.innerHTML = Layout.renderError(err.message);
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", init);
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>เครื่องมือช่วยสอน | ห้องเรียนออนไลน์ วิชาเทคโนโลยี</title>
+
+  <!-- Google Fonts: Prompt -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Prompt', 'sans-serif']
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- QRCodeJS CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%232563eb'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='36' font-family='sans-serif' font-weight='bold'%3ET%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body class="min-h-screen flex flex-col bg-slate-50 text-slate-800">
+  <!-- Shared Navbar -->
+  <div id="app-navbar"></div>
+
+  <!-- Main Content -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+    <!-- Page Header -->
+    <div class="bg-gradient-to-r from-sky-600 via-blue-700 to-indigo-700 rounded-3xl p-6 sm:p-8 text-white shadow-lg mb-8">
+      <span class="inline-block text-xs font-semibold uppercase tracking-wider px-3 py-1 rounded-full bg-white/15 text-sky-100 mb-2">
+        Classroom Teaching Toolkit
+      </span>
+      <h1 class="text-2xl sm:text-3xl font-bold">เครื่องมือช่วยสอนในห้องเรียน</h1>
+      <p class="text-sm sm:text-base text-sky-100 mt-1">
+        ศูนย์รวมเครื่องมือออนไลน์, วงล้อสุ่มชื่อ/แบ่งกลุ่มนักเรียน และนาฬิกาจับเวลาพร้อมเสียงแจ้งเตือน
+      </p>
+    </div>
+
+    <!-- 3 Main Tabs -->
+    <div class="bg-white p-2 rounded-2xl border border-slate-200 shadow-xs inline-flex flex-wrap gap-2 mb-8 w-full sm:w-auto">
+      <button type="button" data-tab="online-tools"
+              class="tools-tab-btn flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold transition-all bg-blue-600 text-white shadow-sm">
+        <span>🧰</span> ศูนย์รวมเครื่องมือออนไลน์
+      </button>
+      <button type="button" data-tab="randomizer"
+              class="tools-tab-btn flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold transition-all text-slate-600 hover:bg-slate-100">
+        <span>🎡</span> วงล้อสุ่มชื่อ / แบ่งกลุ่ม
+      </button>
+      <button type="button" data-tab="timer"
+              class="tools-tab-btn flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold transition-all text-slate-600 hover:bg-slate-100">
+        <span>⏱️</span> นาฬิกาจับเวลาในห้องเรียน
+      </button>
+    </div>
+
+    <!-- ================================================================== -->
+    <!-- TAB 1: ศูนย์รวมเครื่องมือออนไลน์ (Online_Tools)                      -->
+    <!-- ================================================================== -->
+    <section id="panel-online-tools" class="tools-panel space-y-6">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div id="tools-category-filters" class="flex flex-wrap gap-2">
+          <button data-cat="ALL" class="tool-cat-btn px-4 py-2 rounded-xl text-sm font-semibold bg-slate-800 text-white">ทั้งหมด</button>
+          <button data-cat="วิทยาการคำนวณ" class="tool-cat-btn px-4 py-2 rounded-xl text-sm font-semibold bg-white text-blue-700 border border-blue-200 hover:bg-blue-50">วิทยาการคำนวณ</button>
+          <button data-cat="EEC" class="tool-cat-btn px-4 py-2 rounded-xl text-sm font-semibold bg-white text-green-700 border border-green-200 hover:bg-green-50">EEC</button>
+          <button data-cat="ชุมนุม" class="tool-cat-btn px-4 py-2 rounded-xl text-sm font-semibold bg-white text-purple-700 border border-purple-200 hover:bg-purple-50">ชุมนุม</button>
+        </div>
+      </div>
+
+      <div id="online-tools-container"></div>
+    </section>
+
+    <!-- ================================================================== -->
+    <!-- TAB 2: วงล้อสุ่มชื่อ / แบ่งกลุ่มนักเรียน                              -->
+    <!-- ================================================================== -->
+    <section id="panel-randomizer" class="tools-panel hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Left: Room Selector & Roster -->
+        <div class="lg:col-span-5 bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs space-y-4">
+          <div class="flex items-center justify-between gap-2">
+            <h2 class="text-lg font-bold text-slate-800">รายชื่อนักเรียนแยกตามห้อง</h2>
+            <button id="reload-roster-btn" type="button"
+                    class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors">
+              ดึงจาก Sheet
+            </button>
+          </div>
+
+          <div id="roster-status-badge" class="text-xs text-slate-500 bg-slate-50 rounded-xl px-3 py-2 border border-slate-100">
+            กำลังเตรียมรายชื่อนักเรียน...
+          </div>
+
+          <div>
+            <label for="room-select" class="block text-xs font-semibold text-slate-600 mb-1.5">เลือกห้องเรียน</label>
+            <select id="room-select"
+                    class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3.5 py-2.5 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white">
+              <option value="ALL">ทุกห้องเรียน</option>
+            </select>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label for="names-textarea" class="text-xs font-semibold text-slate-600">
+                รายชื่อที่จะนำมาสุ่ม (บรรทัดละ 1 ชื่อ — แก้ไข/เพิ่มได้ทันที)
+              </label>
+              <span id="roster-count-label" class="text-xs font-bold text-blue-600">0 คน</span>
+            </div>
+            <textarea id="names-textarea"
+                      rows="9"
+                      placeholder="พิมพ์หรือวางรายชื่อนักเรียน บรรทัดละ 1 คน..."
+                      class="w-full rounded-2xl border border-slate-300 bg-slate-50 p-3.5 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white leading-relaxed"></textarea>
+          </div>
+
+          <div class="flex items-center justify-between pt-1">
+            <label class="inline-flex items-center gap-2 text-xs font-medium text-slate-600 cursor-pointer">
+              <input id="no-repeat-checkbox" type="checkbox" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
+              ไม่สุ่มซ้ำคนที่ตอบแล้ว
+            </label>
+            <button id="reset-picked-btn" type="button" class="text-xs font-semibold text-slate-500 hover:text-blue-600">
+              ล้างประวัติที่สุ่มแล้ว (<span id="picked-count">0</span>)
+            </button>
+          </div>
+        </div>
+
+        <!-- Right: Spinning Wheel & Group Generator -->
+        <div class="lg:col-span-7 space-y-6">
+          <!-- Spinning Wheel Card -->
+          <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs text-center">
+            <h2 class="text-lg font-bold text-slate-800 mb-1">วงล้อสุ่มชื่อตอบคำถาม</h2>
+            <p class="text-xs text-slate-500 mb-5">กดปุ่มหมุนวงล้อเพื่อสุ่มชื่อนักเรียนพร้อมเสียงเอฟเฟกต์</p>
+
+            <!-- Wheel Canvas + Pointer -->
+            <div class="relative inline-flex items-center justify-center mb-5">
+              <!-- Top Pointer Arrow -->
+              <div class="absolute -top-3 left-1/2 -translate-x-1/2 z-10 w-0 h-0 border-l-[14px] border-l-transparent border-r-[14px] border-r-transparent border-t-[26px] border-t-red-500 drop-shadow-md"></div>
+              <canvas id="wheel-canvas" width="320" height="320" class="max-w-full h-auto rounded-full shadow-lg border-4 border-white"></canvas>
+            </div>
+
+            <!-- Winner Banner -->
+            <div id="winner-banner" class="hidden mb-5 bg-gradient-to-r from-amber-50 to-yellow-50 border-2 border-amber-300 rounded-2xl p-4 animate-fade-in">
+              <div class="text-xs font-semibold text-amber-700 uppercase tracking-wide">🎉 ผู้โชคดีที่ได้ตอบคำถามคือ</div>
+              <div id="winner-name" class="text-2xl sm:text-3xl font-bold text-slate-900 mt-1"></div>
+            </div>
+
+            <div>
+              <button id="spin-wheel-btn" type="button"
+                      class="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-base font-bold shadow-md hover:shadow-lg transition-all active:scale-95">
+                <span>🎡</span> หมุนวงล้อสุ่มชื่อ!
+              </button>
+            </div>
+          </div>
+
+          <!-- Group Splitter Card -->
+          <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+              <div>
+                <h2 class="text-lg font-bold text-slate-800">สุ่มแบ่งกลุ่มนักเรียน</h2>
+                <p class="text-xs text-slate-500">กำหนดจำนวนกลุ่มที่ต้องการแล้วกดสุ่มเพื่อแบ่งสมาชิกอย่างเท่าเทียม</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <label for="group-count-input" class="text-xs font-semibold text-slate-600 whitespace-nowrap">จำนวนกลุ่ม:</label>
+                <input id="group-count-input" type="number" min="2" max="15" value="3"
+                       class="w-20 rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm font-bold text-center text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500" />
+                <button id="split-groups-btn" type="button"
+                        class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold shadow-xs transition-colors whitespace-nowrap">
+                  สุ่มแบ่งกลุ่ม
+                </button>
+              </div>
+            </div>
+
+            <div id="groups-result-container" class="text-sm text-slate-400 text-center py-6 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+              กดปุ่ม "สุ่มแบ่งกลุ่ม" เพื่อแสดงรายชื่อสมาชิกแต่ละกลุ่ม
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================== -->
+    <!-- TAB 3: นาฬิกาจับเวลาในห้องเรียน (Classroom Countdown Timer)        -->
+    <!-- ================================================================== -->
+    <section id="panel-timer" class="tools-panel hidden">
+      <div id="timer-card" class="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/80 shadow-md max-w-3xl mx-auto text-center transition-all">
+        <div class="flex items-center justify-between mb-6">
+          <span class="text-xs font-semibold uppercase tracking-wider px-3 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+            Classroom Timer
+          </span>
+          <div class="flex items-center gap-2">
+            <button id="timer-test-sound" type="button"
+                    class="text-xs font-semibold px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors">
+              🔔 ทดสอบเสียง
+            </button>
+            <button id="timer-fullscreen-btn" type="button"
+                    class="text-xs font-semibold px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-900 text-white transition-colors">
+              ⛶ เต็มจอโปรเจกเตอร์
+            </button>
+          </div>
+        </div>
+
+        <!-- Giant Countdown Display -->
+        <div id="timer-display"
+             class="font-bold tracking-tight text-slate-900 tabular-nums select-none my-4 text-7xl sm:text-8xl lg:text-9xl transition-colors">
+          05:00
+        </div>
+
+        <p id="timer-status-text" class="text-sm font-medium text-slate-500 mb-6">
+          พร้อมจับเวลาสำหรับกิจกรรมในห้องเรียน
+        </p>
+
+        <!-- Progress Bar -->
+        <div class="w-full h-3.5 bg-slate-100 rounded-full overflow-hidden mb-8 border border-slate-200/60">
+          <div id="timer-progress-bar" class="h-full bg-gradient-to-r from-blue-600 to-indigo-500 transition-all duration-300" style="width: 100%;"></div>
+        </div>
+
+        <!-- Preset Quick Buttons (5, 10, 15 min) -->
+        <div class="flex flex-wrap items-center justify-center gap-2.5 mb-6">
+          <button type="button" data-minutes="5"
+                  class="timer-preset-btn px-5 py-2.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 font-bold text-sm transition-colors">
+            5 นาที
+          </button>
+          <button type="button" data-minutes="10"
+                  class="timer-preset-btn px-5 py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 font-bold text-sm transition-colors">
+            10 นาที
+          </button>
+          <button type="button" data-minutes="15"
+                  class="timer-preset-btn px-5 py-2.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 font-bold text-sm transition-colors">
+            15 นาที
+          </button>
+          <div class="inline-flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5">
+            <input id="custom-minutes" type="number" min="0" max="120" value="5"
+                   class="w-14 bg-white border border-slate-300 rounded-lg px-2 py-1 text-sm font-bold text-center" />
+            <span class="text-xs text-slate-500">นาที</span>
+            <input id="custom-seconds" type="number" min="0" max="59" value="0"
+                   class="w-14 bg-white border border-slate-300 rounded-lg px-2 py-1 text-sm font-bold text-center" />
+            <span class="text-xs text-slate-500">วิ</span>
+            <button id="apply-custom-time" type="button"
+                    class="ml-1 px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold">
+              ตั้งค่า
+            </button>
+          </div>
+        </div>
+
+        <!-- Start / Pause / Reset -->
+        <div class="flex flex-wrap items-center justify-center gap-3">
+          <button id="timer-start-btn" type="button"
+                  class="px-8 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-base shadow-md transition-all min-w-[150px]">
+            ▶ เริ่มจับเวลา
+          </button>
+          <button id="timer-pause-btn" type="button"
+                  class="hidden px-8 py-3.5 rounded-2xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-base shadow-md transition-all min-w-[150px]">
+            ⏸ หยุดชั่วคราว
+          </button>
+          <button id="timer-reset-btn" type="button"
+                  class="px-6 py-3.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-base transition-colors">
+            ↺ รีเซ็ต
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Shared Footer -->
+  <div id="app-footer"></div>
+
+  <!-- Scripts -->
+  <script src="./js/config.js"></script>
+  <script src="./js/api.js"></script>
+  <script src="./js/layout.js"></script>
+  <script src="./js/classroom-kit.js"></script>
+  <script>
+    (() => {
+      // ======================================================================
+      // TAB SWITCHING
+      // ======================================================================
+      const tabBtns = document.querySelectorAll(".tools-tab-btn");
+      const panels = document.querySelectorAll(".tools-panel");
+
+      tabBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const target = btn.dataset.tab;
+          tabBtns.forEach((b) => {
+            const active = b.dataset.tab === target;
+            b.className = "tools-tab-btn flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold transition-all " +
+              (active ? "bg-blue-600 text-white shadow-sm" : "text-slate-600 hover:bg-slate-100");
+          });
+          panels.forEach((p) => {
+            p.classList.toggle("hidden", p.id !== `panel-${target}`);
+          });
+          if (target === "randomizer") {
+            drawWheel();
+          }
+        });
+      });
+
+      // ======================================================================
+      // TAB 1: ONLINE TOOLS
+      // ======================================================================
+      let allTools = [];
+      let selectedToolCat = "ALL";
+
+      function renderOnlineTools() {
+        const container = document.getElementById("online-tools-container");
+        const filtered = allTools.filter((t) =>
+          selectedToolCat === "ALL" || String(t.Category || "").trim() === selectedToolCat
+        );
+
+        if (filtered.length === 0) {
+          container.innerHTML = Layout.renderEmpty("ไม่พบเครื่องมือออนไลน์ในหมวดหมู่นี้");
+          return;
+        }
+
+        const cardsHtml = filtered.map((tool, idx) => {
+          const style = APP_CONFIG.getSubjectStyle(tool.Category);
+          return `
+            <article class="bg-white rounded-3xl border border-slate-200/80 shadow-xs hover:shadow-lg transition-all p-6 flex flex-col animate-fade-in">
+              <div class="flex items-start justify-between gap-3 mb-4">
+                <div class="w-14 h-14 rounded-2xl ${style.bgSoftClass} border ${style.borderClass} flex items-center justify-center text-3xl shrink-0">
+                  ${Layout.escapeHtml(tool.Icon || "🌐")}
+                </div>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${style.badgeClass}">
+                  ${Layout.escapeHtml(tool.Category || "ทั่วไป")}
+                </span>
+              </div>
+
+              <h3 class="text-lg font-bold text-slate-800 mb-2">${Layout.escapeHtml(tool.Name)}</h3>
+              <p class="text-sm text-slate-600 leading-relaxed flex-1 mb-5">
+                ${Layout.escapeHtml(tool.Description || "")}
+              </p>
+
+              <div class="flex items-center gap-2 pt-4 border-t border-slate-100">
+                <a href="${Layout.escapeHtml(tool.Link)}"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl ${style.bgClass} ${style.hoverClass} text-white text-sm font-semibold shadow-xs transition-colors">
+                  <span>เปิดเว็บไซต์</span>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </a>
+                <button type="button"
+                        data-tool-qr="${idx}"
+                        title="สร้าง QR Code ขนาดใหญ่เต็มจอโปรเจกเตอร์"
+                        class="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold transition-colors">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+                  </svg>
+                  <span>QR เต็มจอ</span>
+                </button>
+              </div>
+            </article>
+          `;
+        }).join("");
+
+        container.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">${cardsHtml}</div>`;
+
+        container.querySelectorAll("button[data-tool-qr]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const tool = filtered[Number(btn.dataset.toolQr)];
+            if (!tool) return;
+            ClassroomKit.openQrModal({
+              title: tool.Name,
+              subtitle: `เครื่องมือออนไลน์ • ${tool.Category || "ทั่วไป"}`,
+              url: tool.Link,
+              projectorMode: true
+            });
+          });
+        });
+      }
+
+      document.querySelectorAll(".tool-cat-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          selectedToolCat = btn.dataset.cat;
+          document.querySelectorAll(".tool-cat-btn").forEach((b) => {
+            const c = b.dataset.cat;
+            const active = c === selectedToolCat;
+            b.className = "tool-cat-btn px-4 py-2 rounded-xl text-sm font-semibold transition-all ";
+            if (active) {
+              if (c === "วิทยาการคำนวณ") b.className += "bg-blue-600 text-white shadow-sm";
+              else if (c === "EEC") b.className += "bg-green-600 text-white shadow-sm";
+              else if (c === "ชุมนุม") b.className += "bg-purple-600 text-white shadow-sm";
+              else b.className += "bg-slate-800 text-white shadow-sm";
+            } else {
+              if (c === "วิทยาการคำนวณ") b.className += "bg-white text-blue-700 border border-blue-200 hover:bg-blue-50";
+              else if (c === "EEC") b.className += "bg-white text-green-700 border border-green-200 hover:bg-green-50";
+              else if (c === "ชุมนุม") b.className += "bg-white text-purple-700 border border-purple-200 hover:bg-purple-50";
+              else b.className += "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50";
+            }
+          });
+          renderOnlineTools();
+        });
+      });
+
+      async function loadOnlineTools() {
+        const container = document.getElementById("online-tools-container");
+        container.innerHTML = Layout.renderLoading("กำลังโหลดรายการเครื่องมือออนไลน์...");
+        try {
+          const res = await API.getSheetData("Online_Tools");
+          allTools = Array.isArray(res.data) ? res.data : [];
+          renderOnlineTools();
+        } catch (err) {
+          container.innerHTML = Layout.renderError(err.message);
+        }
+      }
+
+      // ======================================================================
+      // TAB 2: SPINNING WHEEL & GROUP SPLITTER
+      // ======================================================================
+      const FALLBACK_ROSTER = [
+        { Name: "เด็กชายธนกฤต ใจดี", Room: "ม.1/1" },
+        { Name: "เด็กหญิงกัญญาภัค สดใส", Room: "ม.1/1" },
+        { Name: "เด็กชายณัฐพล ตั้งใจ", Room: "ม.1/1" },
+        { Name: "เด็กหญิงปวริศา รักเรียน", Room: "ม.2/1" },
+        { Name: "เด็กชายภูริภัทร สร้างสรรค์", Room: "ม.2/1" },
+        { Name: "นายศุภกร ช่างคิด", Room: "ม.3/2" }
+      ];
+
+      let rosterData = [];
+      let pickedNames = new Set();
+      let wheelAngle = 0;
+      let isSpinning = false;
+
+      const WHEEL_COLORS = [
+        "#2563eb", "#16a34a", "#9333ea", "#ea580c",
+        "#0284c7", "#db2777", "#0d9488", "#ca8a04",
+        "#4f46e5", "#dc2626"
+      ];
+
+      const namesTextarea = document.getElementById("names-textarea");
+      const roomSelect = document.getElementById("room-select");
+      const rosterCountLabel = document.getElementById("roster-count-label");
+      const rosterStatusBadge = document.getElementById("roster-status-badge");
+      const wheelCanvas = document.getElementById("wheel-canvas");
+      const wheelCtx = wheelCanvas.getContext("2d");
+
+      function getActiveNames() {
+        const raw = namesTextarea.value
+          .split(/\r?\n/)
+          .map((s) => s.trim())
+          .filter(Boolean);
+        const noRepeat = document.getElementById("no-repeat-checkbox").checked;
+        if (!noRepeat) return raw;
+        const remaining = raw.filter((n) => !pickedNames.has(n));
+        return remaining.length > 0 ? remaining : raw;
+      }
+
+      function updateRosterCount() {
+        const total = namesTextarea.value.split(/\r?\n/).map((s) => s.trim()).filter(Boolean).length;
+        rosterCountLabel.textContent = `${total} คน`;
+        drawWheel();
+      }
+
+      function populateRoomOptions() {
+        const rooms = [...new Set(rosterData.map((r) => r.Room).filter(Boolean))].sort();
+        roomSelect.innerHTML = `<option value="ALL">ทุกห้องเรียน (${rosterData.length} คน)</option>` +
+          rooms.map((rm) => {
+            const c = rosterData.filter((r) => r.Room === rm).length;
+            return `<option value="${Layout.escapeHtml(rm)}">ห้อง ${Layout.escapeHtml(rm)} (${c} คน)</option>`;
+          }).join("");
+        applyRoomFilter();
+      }
+
+      function applyRoomFilter() {
+        const selectedRoom = roomSelect.value;
+        const list = selectedRoom === "ALL"
+          ? rosterData
+          : rosterData.filter((r) => r.Room === selectedRoom);
+        namesTextarea.value = list.map((r) => r.Name).join("\n");
+        pickedNames.clear();
+        document.getElementById("picked-count").textContent = "0";
+        updateRosterCount();
+      }
+
+      async function loadRosterFromSheet() {
+        rosterStatusBadge.textContent = "กำลังดึงรายชื่อนักเรียนจาก Google Sheets...";
+        try {
+          const res = await API.getStudentRoster();
+          if (res && Array.isArray(res.data) && res.data.length > 0) {
+            rosterData = res.data;
+            rosterStatusBadge.innerHTML = `<span class="text-emerald-700 font-semibold">✓ เชื่อมต่อรายชื่อจริงจาก Google Sheets แล้ว (${rosterData.length} คน)</span>`;
+          } else {
+            rosterData = FALLBACK_ROSTER;
+            rosterStatusBadge.innerHTML = `<span class="text-amber-700">ยังไม่มีรายชื่อในแท็บ Student_Works — แสดงรายชื่อตัวอย่างให้ทดลองใช้งาน</span>`;
+          }
+        } catch {
+          rosterData = FALLBACK_ROSTER;
+          rosterStatusBadge.innerHTML = `<span class="text-amber-700">ใช้รายชื่อตัวอย่าง (หากต้องการดึงรายชื่อแยกห้องอัตโนมัติ ให้ Deploy โค้ด Code.gs เวอร์ชันล่าสุด) หรือพิมพ์รายชื่อเองด้านล่างได้เลย</span>`;
+        }
+        populateRoomOptions();
+      }
+
+      function drawWheel() {
+        const names = getActiveNames();
+        const cx = wheelCanvas.width / 2;
+        const cy = wheelCanvas.height / 2;
+        const radius = cx - 8;
+
+        wheelCtx.clearRect(0, 0, wheelCanvas.width, wheelCanvas.height);
+
+        if (names.length === 0) {
+          wheelCtx.fillStyle = "#e2e8f0";
+          wheelCtx.beginPath();
+          wheelCtx.arc(cx, cy, radius, 0, Math.PI * 2);
+          wheelCtx.fill();
+          wheelCtx.fillStyle = "#64748b";
+          wheelCtx.font = "600 16px Prompt, sans-serif";
+          wheelCtx.textAlign = "center";
+          wheelCtx.fillText("กรุณาใส่รายชื่อนักเรียน", cx, cy + 6);
+          return;
+        }
+
+        const sliceAngle = (Math.PI * 2) / names.length;
+
+        names.forEach((name, i) => {
+          const start = wheelAngle + i * sliceAngle;
+          const end = start + sliceAngle;
+
+          wheelCtx.beginPath();
+          wheelCtx.moveTo(cx, cy);
+          wheelCtx.arc(cx, cy, radius, start, end);
+          wheelCtx.closePath();
+          wheelCtx.fillStyle = WHEEL_COLORS[i % WHEEL_COLORS.length];
+          wheelCtx.fill();
+          wheelCtx.strokeStyle = "#ffffff";
+          wheelCtx.lineWidth = 2;
+          wheelCtx.stroke();
+
+          // Draw text
+          wheelCtx.save();
+          wheelCtx.translate(cx, cy);
+          wheelCtx.rotate(start + sliceAngle / 2);
+          wheelCtx.textAlign = "right";
+          wheelCtx.fillStyle = "#ffffff";
+          const fontSize = names.length > 16 ? 11 : names.length > 10 ? 12 : 14;
+          wheelCtx.font = `600 ${fontSize}px Prompt, sans-serif`;
+          const shortName = name.length > 16 ? name.slice(0, 15) + "…" : name;
+          wheelCtx.fillText(shortName, radius - 14, 5);
+          wheelCtx.restore();
+        });
+
+        // Center hub
+        wheelCtx.beginPath();
+        wheelCtx.arc(cx, cy, 24, 0, Math.PI * 2);
+        wheelCtx.fillStyle = "#ffffff";
+        wheelCtx.fill();
+        wheelCtx.strokeStyle = "#e2e8f0";
+        wheelCtx.lineWidth = 3;
+        wheelCtx.stroke();
+      }
+
+      document.getElementById("spin-wheel-btn").addEventListener("click", () => {
+        if (isSpinning) return;
+        const names = getActiveNames();
+        if (names.length === 0) {
+          Layout.showToast("กรุณาใส่รายชื่อนักเรียนอย่างน้อย 1 คน", "error");
+          return;
+        }
+
+        isSpinning = true;
+        document.getElementById("winner-banner").classList.add("hidden");
+
+        const totalSpin = (Math.PI * 2) * (5 + Math.random() * 4);
+        const duration = 3800;
+        const startAngle = wheelAngle;
+        const startTime = performance.now();
+        let lastSliceIdx = -1;
+
+        function animate(now) {
+          const elapsed = now - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          // Ease-out cubic
+          const eased = 1 - Math.pow(1 - progress, 3);
+          wheelAngle = startAngle + totalSpin * eased;
+          drawWheel();
+
+          // Tick sound on slice change
+          const sliceAngle = (Math.PI * 2) / names.length;
+          const pointerAngle = (Math.PI * 1.5 - wheelAngle) % (Math.PI * 2);
+          const normAngle = (pointerAngle + Math.PI * 2) % (Math.PI * 2);
+          const currentIdx = Math.floor(normAngle / sliceAngle) % names.length;
+          if (currentIdx !== lastSliceIdx) {
+            ClassroomKit.playTickSound();
+            lastSliceIdx = currentIdx;
+          }
+
+          if (progress < 1) {
+            requestAnimationFrame(animate);
+          } else {
+            isSpinning = false;
+            const winner = names[currentIdx];
+            pickedNames.add(winner);
+            document.getElementById("picked-count").textContent = String(pickedNames.size);
+            document.getElementById("winner-name").textContent = winner;
+            document.getElementById("winner-banner").classList.remove("hidden");
+            ClassroomKit.playWinSound();
+          }
+        }
+
+        requestAnimationFrame(animate);
+      });
+
+      document.getElementById("split-groups-btn").addEventListener("click", () => {
+        const names = namesTextarea.value.split(/\r?\n/).map((s) => s.trim()).filter(Boolean);
+        const groupCount = Number(document.getElementById("group-count-input").value) || 2;
+        if (names.length < 2) {
+          Layout.showToast("กรุณาใส่รายชื่ออย่างน้อย 2 คนเพื่อแบ่งกลุ่ม", "error");
+          return;
+        }
+
+        const groups = ClassroomKit.splitIntoGroups(names, groupCount);
+        const container = document.getElementById("groups-result-container");
+        const colors = [
+          "border-blue-200 bg-blue-50/50",
+          "border-emerald-200 bg-emerald-50/50",
+          "border-purple-200 bg-purple-50/50",
+          "border-amber-200 bg-amber-50/50",
+          "border-rose-200 bg-rose-50/50",
+          "border-cyan-200 bg-cyan-50/50"
+        ];
+
+        container.className = "grid grid-cols-1 sm:grid-cols-2 gap-4 text-left";
+        container.innerHTML = groups.map((members, i) => `
+          <div class="rounded-2xl border p-4 ${colors[i % colors.length]} animate-fade-in">
+            <div class="flex items-center justify-between mb-2 pb-2 border-b border-slate-200/70">
+              <span class="font-bold text-slate-800">กลุ่มที่ ${i + 1}</span>
+              <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-white text-slate-600">${members.length} คน</span>
+            </div>
+            <ol class="list-decimal list-inside space-y-1 text-sm text-slate-700">
+              ${members.map((m) => `<li>${Layout.escapeHtml(m)}</li>`).join("")}
+            </ol>
+          </div>
+        `).join("");
+        ClassroomKit.playWinSound();
+      });
+
+      roomSelect.addEventListener("change", applyRoomFilter);
+      namesTextarea.addEventListener("input", updateRosterCount);
+      document.getElementById("no-repeat-checkbox").addEventListener("change", drawWheel);
+      document.getElementById("reload-roster-btn").addEventListener("click", loadRosterFromSheet);
+      document.getElementById("reset-picked-btn").addEventListener("click", () => {
+        pickedNames.clear();
+        document.getElementById("picked-count").textContent = "0";
+        drawWheel();
+        Layout.showToast("ล้างประวัติรายชื่อที่สุ่มแล้ว", "info");
+      });
+
+      // ======================================================================
+      // TAB 3: CLASSROOM COUNTDOWN TIMER
+      // ======================================================================
+      let totalSeconds = 5 * 60;
+      let remainingSeconds = 5 * 60;
+      let timerInterval = null;
+
+      const timerDisplay = document.getElementById("timer-display");
+      const timerStatus = document.getElementById("timer-status-text");
+      const timerBar = document.getElementById("timer-progress-bar");
+      const startBtn = document.getElementById("timer-start-btn");
+      const pauseBtn = document.getElementById("timer-pause-btn");
+      const timerCard = document.getElementById("timer-card");
+
+      function formatTime(sec) {
+        const m = Math.floor(sec / 60);
+        const s = sec % 60;
+        return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+      }
+
+      function renderTimer() {
+        timerDisplay.textContent = formatTime(remainingSeconds);
+        const pct = totalSeconds > 0 ? (remainingSeconds / totalSeconds) * 100 : 0;
+        timerBar.style.width = `${pct}%`;
+
+        if (remainingSeconds === 0) {
+          timerDisplay.className = "font-bold tracking-tight text-red-600 tabular-nums select-none my-4 text-7xl sm:text-8xl lg:text-9xl animate-pulse";
+          timerBar.className = "h-full bg-red-600 transition-all duration-300";
+        } else if (remainingSeconds <= 30) {
+          timerDisplay.className = "font-bold tracking-tight text-amber-600 tabular-nums select-none my-4 text-7xl sm:text-8xl lg:text-9xl";
+          timerBar.className = "h-full bg-amber-500 transition-all duration-300";
+        } else {
+          timerDisplay.className = "font-bold tracking-tight text-slate-900 tabular-nums select-none my-4 text-7xl sm:text-8xl lg:text-9xl";
+          timerBar.className = "h-full bg-gradient-to-r from-blue-600 to-indigo-500 transition-all duration-300";
+        }
+      }
+
+      function stopTimer() {
+        if (timerInterval) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+        }
+        startBtn.classList.remove("hidden");
+        pauseBtn.classList.add("hidden");
+      }
+
+      function setTimerSeconds(sec) {
+        stopTimer();
+        totalSeconds = Math.max(1, sec);
+        remainingSeconds = totalSeconds;
+        timerStatus.textContent = "พร้อมจับเวลาสำหรับกิจกรรมในห้องเรียน";
+        renderTimer();
+      }
+
+      document.querySelectorAll(".timer-preset-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const mins = Number(btn.dataset.minutes) || 5;
+          document.getElementById("custom-minutes").value = mins;
+          document.getElementById("custom-seconds").value = 0;
+          setTimerSeconds(mins * 60);
+        });
+      });
+
+      document.getElementById("apply-custom-time").addEventListener("click", () => {
+        const m = Math.max(0, Number(document.getElementById("custom-minutes").value) || 0);
+        const s = Math.max(0, Math.min(59, Number(document.getElementById("custom-seconds").value) || 0));
+        if (m === 0 && s === 0) {
+          Layout.showToast("กรุณากำหนดเวลามากกว่า 0 วินาที", "error");
+          return;
+        }
+        setTimerSeconds(m * 60 + s);
+      });
+
+      startBtn.addEventListener("click", () => {
+        if (remainingSeconds <= 0) remainingSeconds = totalSeconds;
+        startBtn.classList.add("hidden");
+        pauseBtn.classList.remove("hidden");
+        timerStatus.textContent = "กำลังจับเวลานับถอยหลัง...";
+
+        timerInterval = setInterval(() => {
+          remainingSeconds--;
+          renderTimer();
+          if (remainingSeconds <= 0) {
+            stopTimer();
+            timerStatus.textContent = "⏰ หมดเวลาแล้วครับ!";
+            ClassroomKit.playAlarmSound();
+            Layout.showToast("⏰ หมดเวลาการทำกิจกรรมแล้ว!", "info");
+          }
+        }, 1000);
+      });
+
+      pauseBtn.addEventListener("click", () => {
+        stopTimer();
+        timerStatus.textContent = "หยุดเวลาชั่วคราว";
+      });
+
+      document.getElementById("timer-reset-btn").addEventListener("click", () => {
+        setTimerSeconds(totalSeconds);
+      });
+
+      document.getElementById("timer-test-sound").addEventListener("click", () => {
+        ClassroomKit.playAlarmSound();
+      });
+
+      document.getElementById("timer-fullscreen-btn").addEventListener("click", () => {
+        if (!document.fullscreenElement) {
+          timerCard.requestFullscreen().catch(() => {});
+        } else {
+          document.exitFullscreen().catch(() => {});
+        }
+      });
+
+      // Init
+      document.addEventListener("DOMContentLoaded", () => {
+        loadOnlineTools();
+        loadRosterFromSheet();
+        renderTimer();
+      });
+    })();
+  </script>
+</body>
+</html>

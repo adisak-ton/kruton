@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>เช็กสถานะการส่งงาน | ห้องเรียนออนไลน์ วิชาเทคโนโลยี</title>
+
+  <!-- Google Fonts: Prompt -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Prompt', 'sans-serif']
+          }
+        }
+      }
+    };
+  </script>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%232563eb'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='36' font-family='sans-serif' font-weight='bold'%3ET%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body class="min-h-screen flex flex-col bg-slate-50 text-slate-800">
+  <!-- Shared Navbar -->
+  <div id="app-navbar"></div>
+
+  <!-- Main Content -->
+  <main class="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+    <!-- Header Banner -->
+    <div class="bg-gradient-to-r from-indigo-700 via-blue-700 to-sky-600 rounded-3xl p-6 sm:p-8 text-white shadow-lg mb-8">
+      <div class="flex flex-wrap items-center gap-2 mb-2">
+        <span class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full bg-white/15 text-blue-100 border border-white/20">
+          🔒 คุ้มครองข้อมูลส่วนบุคคล (PDPA Safe)
+        </span>
+      </div>
+      <h1 class="text-2xl sm:text-3xl font-bold">ตรวจสอบสถานะการส่งงานรายบุคคล</h1>
+      <p class="text-sm sm:text-base text-blue-100 mt-1">
+        กรอกรหัสนักเรียนของตนเองเพื่อดูความคืบหน้าการส่งงานและหมายเหตุจากครูผู้สอน (ระบบจะไม่แสดงรายชื่อนักเรียนคนอื่น)
+      </p>
+    </div>
+
+    <!-- Search Card -->
+    <section class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-sm mb-8">
+      <form id="check-work-form" class="flex flex-col sm:flex-row gap-3">
+        <div class="relative flex-1">
+          <input id="student-id-input"
+                 type="text"
+                 inputmode="numeric"
+                 autocomplete="off"
+                 required
+                 placeholder="กรอกรหัสนักเรียน เช่น 65001"
+                 class="w-full rounded-2xl border border-slate-300 bg-slate-50 pl-12 pr-4 py-3.5 text-base font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all" />
+          <svg class="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
+          </svg>
+        </div>
+
+        <button id="check-submit-btn" type="submit"
+                class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-base shadow-sm transition-colors shrink-0">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          ค้นหาสถานะงาน
+        </button>
+      </form>
+
+      <p class="text-xs text-slate-400 mt-3">
+        💡 ตัวอย่างรหัสสำหรับทดสอบ: <button type="button" data-sample="65001" class="sample-id-btn underline hover:text-blue-600">65001</button>,
+        <button type="button" data-sample="65002" class="sample-id-btn underline hover:text-blue-600">65002</button>,
+        <button type="button" data-sample="65003" class="sample-id-btn underline hover:text-blue-600">65003</button>
+      </p>
+    </section>
+
+    <!-- Result Area -->
+    <section id="work-result-container"></section>
+  </main>
+
+  <!-- Shared Footer -->
+  <div id="app-footer"></div>
+
+  <!-- Scripts -->
+  <script src="./js/config.js"></script>
+  <script src="./js/api.js"></script>
+  <script src="./js/layout.js"></script>
+  <script>
+    (() => {
+      const form = document.getElementById("check-work-form");
+      const input = document.getElementById("student-id-input");
+      const resultContainer = document.getElementById("work-result-container");
+
+      function classifyWorkStatus(value) {
+        const text = String(value || "").trim();
+        const lower = text.toLowerCase();
+
+        if (!text || text === "-" || lower.includes("ยังไม่ถึงกำหนด") || lower.includes("ยกเว้น")) {
+          return {
+            state: "neutral",
+            label: text || "ยังไม่ถึงกำหนด",
+            cardClass: "bg-slate-50 border-slate-200",
+            badgeClass: "bg-slate-200 text-slate-700",
+            icon: "⏳"
+          };
+        }
+
+        if (lower.includes("ส่งแล้ว") || lower.includes("ผ่าน") || lower.includes("ครบ") || lower.includes("ตรวจแล้ว") || /^(\d+(\.\d+)?)$/.test(text)) {
+          return {
+            state: "done",
+            label: text,
+            cardClass: "bg-emerald-50/70 border-emerald-200",
+            badgeClass: "bg-emerald-600 text-white",
+            icon: "✅"
+          };
+        }
+
+        if (lower.includes("รอตรวจ") || lower.includes("แก้ไข") || lower.includes("ส่งช้า")) {
+          return {
+            state: "pending",
+            label: text,
+            cardClass: "bg-amber-50/70 border-amber-200",
+            badgeClass: "bg-amber-500 text-white",
+            icon: "🕒"
+          };
+        }
+
+        // ค้างส่ง / ยังไม่ส่ง / ขาดส่ง
+        return {
+          state: "missing",
+          label: text,
+          cardClass: "bg-red-50/80 border-red-200",
+          badgeClass: "bg-red-600 text-white",
+          icon: "❌"
+        };
+      }
+
+      function renderStudentResult(student) {
+        const works = [
+          { key: "Work1", title: "ชิ้นงานที่ 1", val: student.Work1 },
+          { key: "Work2", title: "ชิ้นงานที่ 2", val: student.Work2 },
+          { key: "Work3", title: "ชิ้นงานที่ 3", val: student.Work3 },
+          { key: "Work4", title: "ชิ้นงานที่ 4", val: student.Work4 },
+          { key: "Work5", title: "ชิ้นงานที่ 5", val: student.Work5 }
+        ];
+
+        const classified = works.map((w) => ({ ...w, meta: classifyWorkStatus(w.val) }));
+        const countable = classified.filter((w) => w.meta.state !== "neutral");
+        const completedCount = classified.filter((w) => w.meta.state === "done").length;
+        const missingCount = classified.filter((w) => w.meta.state === "missing").length;
+        const denominator = countable.length > 0 ? countable.length : works.length;
+        const percent = Math.round((completedCount / denominator) * 100);
+
+        const progressColor =
+          percent === 100 ? "from-emerald-500 to-green-600" :
+          percent >= 60 ? "from-blue-500 to-indigo-600" :
+          "from-amber-500 to-red-500";
+
+        const overallBadgeClass =
+          missingCount === 0
+            ? "bg-emerald-100 text-emerald-800 border-emerald-200"
+            : "bg-red-100 text-red-800 border-red-200";
+
+        resultContainer.innerHTML = `
+          <div class="bg-white rounded-3xl border border-slate-200/80 shadow-md overflow-hidden animate-fade-in">
+            <!-- Student Identity Header -->
+            <div class="bg-slate-900 text-white p-6 sm:p-8">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="flex items-center gap-4">
+                  <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-2xl font-bold shadow-md shrink-0">
+                    🎓
+                  </div>
+                  <div>
+                    <div class="text-xs text-slate-300">รหัสนักเรียน ${Layout.escapeHtml(student.StudentID)}</div>
+                    <h2 class="text-xl sm:text-2xl font-bold">${Layout.escapeHtml(student.Name)}</h2>
+                    <div class="text-sm text-blue-200 mt-0.5">ห้องเรียน: ${Layout.escapeHtml(student.Room || "-")}</div>
+                  </div>
+                </div>
+
+                <span class="self-start sm:self-center inline-flex items-center px-4 py-1.5 rounded-full text-sm font-bold border ${overallBadgeClass}">
+                  สถานะรวม: ${Layout.escapeHtml(student.Status || (missingCount === 0 ? "ครบถ้วน" : `ค้างส่ง ${missingCount} ชิ้น`))}
+                </span>
+              </div>
+
+              <!-- Progress Bar -->
+              <div class="mt-6 pt-5 border-t border-white/10">
+                <div class="flex items-center justify-between text-sm mb-2">
+                  <span class="text-slate-300 font-medium">ความคืบหน้าการส่งงาน (${completedCount} / ${denominator} ชิ้นที่กำหนด)</span>
+                  <span class="text-lg font-bold text-white">${percent}%</span>
+                </div>
+                <div class="w-full h-4 bg-white/15 rounded-full overflow-hidden">
+                  <div class="h-full bg-gradient-to-r ${progressColor} rounded-full transition-all duration-700" style="width: ${percent}%;"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Works Breakdown -->
+            <div class="p-6 sm:p-8 space-y-6">
+              <div>
+                <h3 class="text-base font-bold text-slate-800 mb-4">รายการส่งงานแต่ละชิ้น</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+                  ${classified.map((w) => `
+                    <div class="rounded-2xl border p-4 text-center flex flex-col items-center justify-between gap-2 ${w.meta.cardClass}">
+                      <div class="text-xs font-semibold text-slate-500">${w.title}</div>
+                      <div class="text-2xl">${w.meta.icon}</div>
+                      <span class="inline-block px-3 py-1 rounded-full text-xs font-bold ${w.meta.badgeClass}">
+                        ${Layout.escapeHtml(w.meta.label)}
+                      </span>
+                    </div>
+                  `).join("")}
+                </div>
+              </div>
+
+              <!-- Teacher Note -->
+              <div class="rounded-2xl bg-blue-50/70 border border-blue-200 p-5 flex items-start gap-3">
+                <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-lg shrink-0">
+                  💬
+                </div>
+                <div>
+                  <div class="text-xs font-bold text-blue-800 uppercase tracking-wide mb-1">หมายเหตุจากครูผู้สอน</div>
+                  <p class="text-sm sm:text-base text-slate-700 leading-relaxed">
+                    ${Layout.escapeHtml(student.Note || "ไม่มีหมายเหตุเพิ่มเติม ทำดีมากครับ รักษามาตรฐานต่อไป!")}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      async function searchStudent(studentId) {
+        const cleaned = String(studentId || "").trim();
+        if (!cleaned) return;
+
+        resultContainer.innerHTML = Layout.renderLoading(`กำลังค้นหาข้อมูลรหัสนักเรียน ${cleaned}...`);
+
+        try {
+          const res = await API.checkStudentWork(cleaned);
+          if (!res.found || !res.data) {
+            resultContainer.innerHTML = `
+              <div class="bg-white rounded-3xl border border-amber-200 p-8 text-center shadow-xs animate-fade-in">
+                <div class="w-14 h-14 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-2xl mx-auto mb-3">🔎</div>
+                <h3 class="text-lg font-bold text-slate-800 mb-1">ไม่พบข้อมูลรหัสนักเรียน "${Layout.escapeHtml(cleaned)}"</h3>
+                <p class="text-sm text-slate-500">กรุณาตรวจสอบตัวเลขรหัสนักเรียนอีกครั้ง หรือติดต่อครูผู้สอนหากข้อมูลยังไม่ปรากฏในระบบ</p>
+              </div>
+            `;
+            return;
+          }
+
+          renderStudentResult(res.data);
+        } catch (err) {
+          resultContainer.innerHTML = Layout.renderError(err.message);
+        }
+      }
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        searchStudent(input.value);
+      });
+
+      document.querySelectorAll(".sample-id-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          input.value = btn.dataset.sample;
+          searchStudent(btn.dataset.sample);
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

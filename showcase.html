@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ผลงานนักเรียนและประเมิน PDCA | ห้องเรียนออนไลน์ วิชาเทคโนโลยี</title>
+
+  <!-- Google Fonts: Prompt -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Prompt', 'sans-serif']
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- QRCodeJS CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%232563eb'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='36' font-family='sans-serif' font-weight='bold'%3ET%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body class="min-h-screen flex flex-col bg-slate-50 text-slate-800">
+  <!-- Shared Navbar -->
+  <div id="app-navbar"></div>
+
+  <!-- Main Content -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-12">
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-purple-700 via-indigo-700 to-blue-700 rounded-3xl p-6 sm:p-8 text-white shadow-lg">
+      <span class="inline-block text-xs font-semibold uppercase tracking-wider px-3 py-1 rounded-full bg-white/15 text-purple-100 mb-2">
+        Student Showcase &amp; Active Learning
+      </span>
+      <h1 class="text-2xl sm:text-3xl font-bold">ผลงานนักเรียนและภาพกิจกรรม</h1>
+      <p class="text-sm sm:text-base text-purple-100 mt-1">
+        นิทรรศการผลงานโครงงาน นวัตกรรม และกิจกรรม Active Learning พร้อมแบบประเมินความพึงพอใจเพื่อการพัฒนา (PDCA)
+      </p>
+    </div>
+
+    <!-- Showcase Gallery Section -->
+    <section class="space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+          <span class="w-2 h-6 rounded-full bg-purple-600 inline-block"></span>
+          แกลเลอรีผลงานนักเรียน
+        </h2>
+
+        <!-- Subject Filter Buttons -->
+        <div class="flex flex-wrap gap-2">
+          <button data-subject="ALL" class="sc-filter-btn px-4 py-2 rounded-xl text-sm font-semibold bg-slate-800 text-white shadow-xs">ทั้งหมด</button>
+          <button data-subject="วิทยาการคำนวณ" class="sc-filter-btn px-4 py-2 rounded-xl text-sm font-semibold bg-white text-blue-700 border border-blue-200 hover:bg-blue-50">วิทยาการคำนวณ</button>
+          <button data-subject="EEC" class="sc-filter-btn px-4 py-2 rounded-xl text-sm font-semibold bg-white text-green-700 border border-green-200 hover:bg-green-50">วิชา EEC</button>
+          <button data-subject="ชุมนุม" class="sc-filter-btn px-4 py-2 rounded-xl text-sm font-semibold bg-white text-purple-700 border border-purple-200 hover:bg-purple-50">ชุมนุม</button>
+        </div>
+      </div>
+
+      <div id="showcase-grid-container"></div>
+    </section>
+
+    <!-- PDCA Feedback & Guestbook Section -->
+    <section id="feedback-section" class="bg-white rounded-3xl border border-slate-200/80 shadow-md overflow-hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-12">
+        <!-- Left Info Column -->
+        <div class="lg:col-span-5 bg-gradient-to-br from-slate-900 to-indigo-950 text-white p-6 sm:p-8 flex flex-col justify-between">
+          <div>
+            <span class="inline-block text-xs font-semibold px-3 py-1 rounded-full bg-amber-500/20 text-amber-200 border border-amber-400/30 mb-3">
+              PDCA Quality Improvement
+            </span>
+            <h2 class="text-2xl font-bold mb-3">แบบประเมินความพึงพอใจและสมุดเยี่ยมชม</h2>
+            <p class="text-sm text-slate-300 leading-relaxed mb-6">
+              ขอเชิญนักเรียน ผู้ปกครอง และคณะกรรมการประเมินร่วมให้คะแนนความพึงพอใจและข้อเสนอแนะ เพื่อนำไปพัฒนาการจัดการเรียนรู้และห้องเรียนออนไลน์ให้ดียิ่งขึ้นตามวงจรคุณภาพ PDCA
+            </p>
+          </div>
+          <div class="bg-white/10 rounded-2xl p-4 border border-white/15 text-xs text-slate-200 space-y-1.5">
+            <div class="font-semibold text-amber-200">ข้อมูลของท่านถูกบันทึกจริงลงฐานข้อมูล</div>
+            <p>ทุกความคิดเห็นจะถูกจัดเก็บในแท็บ Feedback ของ Google Sheets เพื่อสรุปผลและปรับปรุงห้องเรียนอย่างต่อเนื่อง</p>
+          </div>
+        </div>
+
+        <!-- Right Form Column -->
+        <div class="lg:col-span-7 p-6 sm:p-8">
+          <form id="feedback-form" class="space-y-5">
+            <!-- Role Selector -->
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-2">บทบาทของผู้ประเมิน</label>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                <label class="cursor-pointer">
+                  <input type="radio" name="role" value="นักเรียน" class="peer sr-only" checked />
+                  <div class="peer-checked:bg-blue-50 peer-checked:border-blue-600 peer-checked:text-blue-700 border border-slate-200 rounded-xl px-4 py-3 text-center text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-all">
+                    🎓 นักเรียน
+                  </div>
+                </label>
+                <label class="cursor-pointer">
+                  <input type="radio" name="role" value="ผู้ปกครอง" class="peer sr-only" />
+                  <div class="peer-checked:bg-emerald-50 peer-checked:border-emerald-600 peer-checked:text-emerald-700 border border-slate-200 rounded-xl px-4 py-3 text-center text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-all">
+                    👨‍👩‍👧 ผู้ปกครอง
+                  </div>
+                </label>
+                <label class="cursor-pointer">
+                  <input type="radio" name="role" value="คณะกรรมการ" class="peer sr-only" />
+                  <div class="peer-checked:bg-amber-50 peer-checked:border-amber-500 peer-checked:text-amber-800 border border-slate-200 rounded-xl px-4 py-3 text-center text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-all">
+                    🏅 คณะกรรมการ
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <!-- Interactive 1-5 Star Rating -->
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-2">ระดับความพึงพอใจ (1–5 ดาว)</label>
+              <div class="flex items-center gap-2">
+                <div id="star-rating-group" class="flex items-center gap-1.5">
+                  <button type="button" data-star="1" class="star-btn text-4xl text-amber-400 transition-transform hover:scale-110" aria-label="1 ดาว">★</button>
+                  <button type="button" data-star="2" class="star-btn text-4xl text-amber-400 transition-transform hover:scale-110" aria-label="2 ดาว">★</button>
+                  <button type="button" data-star="3" class="star-btn text-4xl text-amber-400 transition-transform hover:scale-110" aria-label="3 ดาว">★</button>
+                  <button type="button" data-star="4" class="star-btn text-4xl text-amber-400 transition-transform hover:scale-110" aria-label="4 ดาว">★</button>
+                  <button type="button" data-star="5" class="star-btn text-4xl text-amber-400 transition-transform hover:scale-110" aria-label="5 ดาว">★</button>
+                </div>
+                <span id="rating-label" class="ml-2 text-sm font-semibold text-amber-700 bg-amber-50 px-3 py-1 rounded-full border border-amber-200">
+                  5 ดาว — พึงพอใจมากที่สุด
+                </span>
+              </div>
+            </div>
+
+            <!-- Comment -->
+            <div>
+              <label for="feedback-comment" class="block text-sm font-semibold text-slate-700 mb-2">
+                ข้อเสนอแนะ / ข้อความสมุดเยี่ยมชม
+              </label>
+              <textarea id="feedback-comment"
+                        rows="4"
+                        required
+                        placeholder="เขียนคำชื่นชม ข้อเสนอแนะ หรือสิ่งที่อยากให้เพิ่มเติมในห้องเรียนออนไลน์..."
+                        class="w-full rounded-2xl border border-slate-300 bg-slate-50 p-4 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white"></textarea>
+            </div>
+
+            <div id="feedback-alert" class="hidden rounded-xl p-3.5 text-sm font-medium"></div>
+
+            <button id="feedback-submit-btn" type="submit"
+                    class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-base shadow-sm transition-colors">
+              <span>📩</span> ส่งแบบประเมินและลงสมุดเยี่ยมชม
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Shared Footer -->
+  <div id="app-footer"></div>
+
+  <!-- Scripts -->
+  <script src="./js/config.js"></script>
+  <script src="./js/api.js"></script>
+  <script src="./js/layout.js"></script>
+  <script src="./js/classroom-kit.js"></script>
+  <script>
+    (() => {
+      // ======================================================================
+      // SHOWCASE GALLERY
+      // ======================================================================
+      let allProjects = [];
+      let selectedSubject = "ALL";
+
+      function renderShowcase() {
+        const container = document.getElementById("showcase-grid-container");
+        const filtered = allProjects.filter((p) =>
+          selectedSubject === "ALL" || String(p.Subject || "").trim() === selectedSubject
+        );
+
+        if (filtered.length === 0) {
+          container.innerHTML = Layout.renderEmpty("ยังไม่มีผลงานนักเรียนในรายวิชานี้");
+          return;
+        }
+
+        const html = filtered.map((proj, idx) => {
+          const style = APP_CONFIG.getSubjectStyle(proj.Subject);
+          const converted = API.convertGoogleDriveLink(proj.MediaLink);
+          const thumb = converted.thumbnailUrl || "";
+
+          return `
+            <article class="group bg-white rounded-3xl border border-slate-200/80 shadow-xs hover:shadow-xl transition-all overflow-hidden flex flex-col animate-fade-in">
+              <!-- Media Preview Cover (Clickable) -->
+              <div data-open-media="${idx}"
+                   class="relative h-52 bg-gradient-to-br ${style.gradientClass} cursor-pointer overflow-hidden flex items-center justify-center">
+                ${thumb ? `
+                  <img src="${Layout.escapeHtml(thumb)}"
+                       alt="${Layout.escapeHtml(proj.ProjectName)}"
+                       loading="lazy"
+                       onerror="this.style.display='none'"
+                       class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                ` : ""}
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-slate-900/15 to-transparent flex flex-col justify-between p-4">
+                  <div class="flex items-center justify-between">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-white/95 text-slate-800 shadow-xs">
+                      ${Layout.escapeHtml(proj.Subject || "ทั่วไป")}
+                    </span>
+                    <span class="w-9 h-9 rounded-full bg-white/25 backdrop-blur-md text-white flex items-center justify-center group-hover:bg-white group-hover:text-slate-900 transition-colors">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                      </svg>
+                    </span>
+                  </div>
+                  <div class="text-white text-xs font-medium inline-flex items-center gap-1.5">
+                    <span>คลิกเพื่อขยายดูภาพ / วิดีโอผลงาน</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Project Details -->
+              <div class="p-5 sm:p-6 flex-1 flex flex-col">
+                <h3 class="text-lg font-bold text-slate-800 leading-snug mb-2">
+                  ${Layout.escapeHtml(proj.ProjectName)}
+                </h3>
+                <p class="text-xs font-semibold ${style.textClass} mb-3 flex items-center gap-1.5">
+                  <span>👥</span> ${Layout.escapeHtml(proj.Students || "นักเรียนในรายวิชา")}
+                </p>
+                <p class="text-sm text-slate-600 leading-relaxed flex-1 mb-4">
+                  ${Layout.escapeHtml(proj.Description || "")}
+                </p>
+
+                <button type="button"
+                        data-open-media="${idx}"
+                        class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-sm font-semibold transition-colors">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                  ขยายดูผลงาน / วิดีโอ
+                </button>
+              </div>
+            </article>
+          `;
+        }).join("");
+
+        container.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">${html}</div>`;
+
+        container.querySelectorAll("[data-open-media]").forEach((el) => {
+          el.addEventListener("click", () => {
+            const proj = filtered[Number(el.dataset.openMedia)];
+            if (!proj) return;
+            ClassroomKit.openPreviewModal({
+              title: proj.ProjectName,
+              subtitle: `ผู้จัดทำ: ${proj.Students || "-"}`,
+              badge: proj.Subject,
+              url: proj.MediaLink
+            });
+          });
+        });
+      }
+
+      document.querySelectorAll(".sc-filter-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          selectedSubject = btn.dataset.subject;
+          document.querySelectorAll(".sc-filter-btn").forEach((b) => {
+            const s = b.dataset.subject;
+            const active = s === selectedSubject;
+            b.className = "sc-filter-btn px-4 py-2 rounded-xl text-sm font-semibold transition-all ";
+            if (active) {
+              if (s === "วิทยาการคำนวณ") b.className += "bg-blue-600 text-white shadow-sm";
+              else if (s === "EEC") b.className += "bg-green-600 text-white shadow-sm";
+              else if (s === "ชุมนุม") b.className += "bg-purple-600 text-white shadow-sm";
+              else b.className += "bg-slate-800 text-white shadow-sm";
+            } else {
+              if (s === "วิทยาการคำนวณ") b.className += "bg-white text-blue-700 border border-blue-200 hover:bg-blue-50";
+              else if (s === "EEC") b.className += "bg-white text-green-700 border border-green-200 hover:bg-green-50";
+              else if (s === "ชุมนุม") b.className += "bg-white text-purple-700 border border-purple-200 hover:bg-purple-50";
+              else b.className += "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50";
+            }
+          });
+          renderShowcase();
+        });
+      });
+
+      async function loadShowcase() {
+        const container = document.getElementById("showcase-grid-container");
+        container.innerHTML = Layout.renderLoading("กำลังโหลดแกลเลอรีผลงานนักเรียน...");
+        try {
+          const res = await API.getSheetData("Showcase");
+          allProjects = Array.isArray(res.data) ? res.data : [];
+          renderShowcase();
+        } catch (err) {
+          container.innerHTML = Layout.renderError(err.message);
+        }
+      }
+
+      // ======================================================================
+      // FEEDBACK FORM (PDCA)
+      // ======================================================================
+      let selectedRating = 5;
+      const RATING_TEXT = {
+        1: "1 ดาว — ควรปรับปรุง",
+        2: "2 ดาว — พอใช้",
+        3: "3 ดาว — ปานกลาง",
+        4: "4 ดาว — พึงพอใจมาก",
+        5: "5 ดาว — พึงพอใจมากที่สุด"
+      };
+
+      const starBtns = document.querySelectorAll(".star-btn");
+      const ratingLabel = document.getElementById("rating-label");
+
+      function updateStars(val) {
+        selectedRating = val;
+        starBtns.forEach((btn) => {
+          const n = Number(btn.dataset.star);
+          btn.classList.toggle("text-amber-400", n <= val);
+          btn.classList.toggle("text-slate-300", n > val);
+        });
+        ratingLabel.textContent = RATING_TEXT[val] || "";
+      }
+
+      starBtns.forEach((btn) => {
+        btn.addEventListener("click", () => updateStars(Number(btn.dataset.star)));
+      });
+
+      const feedbackForm = document.getElementById("feedback-form");
+      const feedbackAlert = document.getElementById("feedback-alert");
+      const feedbackSubmitBtn = document.getElementById("feedback-submit-btn");
+
+      feedbackForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const roleInput = feedbackForm.querySelector('input[name="role"]:checked');
+        const role = roleInput ? roleInput.value : "ผู้เยี่ยมชม";
+        const comment = document.getElementById("feedback-comment").value.trim();
+
+        feedbackSubmitBtn.disabled = true;
+        feedbackSubmitBtn.innerHTML = `<span class="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin inline-block"></span> กำลังบันทึกข้อมูล...`;
+        feedbackAlert.classList.add("hidden");
+
+        try {
+          await API.submitFeedback({ role, rating: selectedRating, comment });
+          feedbackAlert.className = "rounded-xl p-4 text-sm font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 animate-fade-in";
+          feedbackAlert.textContent = "✅ บันทึกผลประเมินความพึงพอใจลง Google Sheets เรียบร้อยแล้ว ขอบคุณสำหรับความคิดเห็นครับ!";
+          feedbackAlert.classList.remove("hidden");
+          feedbackForm.reset();
+          updateStars(5);
+          Layout.showToast("ส่งแบบประเมินเรียบร้อยแล้ว ขอบคุณครับ!", "success");
+        } catch (err) {
+          feedbackAlert.className = "rounded-xl p-4 text-sm font-semibold bg-red-50 text-red-700 border border-red-200";
+          feedbackAlert.textContent = `❌ ไม่สามารถส่งแบบประเมินได้: ${err.message}`;
+          feedbackAlert.classList.remove("hidden");
+        } finally {
+          feedbackSubmitBtn.disabled = false;
+          feedbackSubmitBtn.innerHTML = `<span>📩</span> ส่งแบบประเมินและลงสมุดเยี่ยมชม`;
+        }
+      });
+
+      document.addEventListener("DOMContentLoaded", () => {
+        updateStars(5);
+        loadShowcase();
+      });
+    })();
+  </script>
+</body>
+</html>
